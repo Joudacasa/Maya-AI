@@ -1,0 +1,20 @@
+{
+  "version": "2.0",
+  "identity": {
+    "name": "Maya AI",
+    "creator": "Joudacasa",
+    "mode": "AI"
+  },
+  "models": [
+    { "id": "llama-3.3-70b-versatile", "provider": "Groq", "task": "Auto" },
+    { "id": "moonshotai/kimi-k2-instruct", "provider": "Groq", "task": "Flash" },
+    { "id": "groq/compound", "provider": "Groq", "task": "Pro" },
+    { "id": "groq/compound-mini", "provider": "Groq", "task": "Mini" },
+    { "id": "moonshotai/kimi-k2-instruct-0905", "provider": "Groq", "task": "Lite" }
+  ],
+  "ui_preferences": {
+    "theme": "Maya custom",
+    "animations": true,
+    "sound_enabled": true
+  }
+}
