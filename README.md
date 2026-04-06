@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Maya AI Logo" width="128" height="128">
+  <img src="assets/images/logo.png" alt="Maya AI Logo" width="128" height="128">
 </p>
 
 <h1 align="center">Maya AI</h1>
