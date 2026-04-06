@@ -6,7 +6,8 @@
 <title>Maya AI</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="icon" href="logo.png">
+<link rel="icon" href="assets/images/logo.png">
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 :root {
   --amber: #F5A623; --amber-deep: #E8890A; --amber-light: #FFC85A;
@@ -190,21 +191,80 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 /* rename input */
 .rename-input { background:var(--bg3); border:1px solid var(--amber); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; padding:3px 7px; outline:none; width:100%; }
+
+/* ── MOBILE RESPONSIVENESS ── */
+@media (max-width: 768px) {
+  :root { --sidebar: 280px; }
+  
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 150;
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  #sidebar.closed {
+    transform: translateX(-100%);
+    margin-left: 0;
+  }
+  
+  #main { margin-left: 0 !important; }
+  
+  .msg { padding: 12px 16px; gap: 8px; }
+  .msg-avatar { width: 24px; height: 24px; font-size: 10px; }
+  .msg-body { max-width: 100%; }
+  .welcome-title { font-size: 20px; }
+  
+  #input-area { padding: 10px 12px 24px; }
+  #input-wrap { padding: 10px 12px; border-radius: 20px; }
+  #prompt { font-size: 16px; }
+  
+  #chips-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  #chips-row::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; padding: 8px 14px; }
+  
+  .model-dropdown-wrap { position: static; }
+  #model-menu { right: 12px; left: 12px; width: auto; bottom: calc(100% + 12px); }
+  
+  .action-btn, #send-btn { min-width: 40px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+}
+
+/* Sidebar Backdrop on Mobile */
+#sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 140;
+  backdrop-filter: blur(2px);
+}
+@media (max-width: 768px) {
+  #sidebar:not(.closed) ~ #sidebar-backdrop { display: block; }
+}
 </style>
-</head>
 <meta name="description" content="Maya - Sua assistente de IA do dia a dia programada para ser carinhosa e ajudante.">
-<meta name="keywords" content="Maya, Inteligência Artificial, Chatbot, Programação, Gerador de Imagem, IA Brasileira, Llama 3, Groq, Grok, AI, Artificial Inteligence.">
+<meta name="keywords" content="Maya, Inteligência Artificial, Chatbot, Programação, Gerador de Imagem, IA Brasileira, Llama 3, Groq, Grok, AI, Artificial Intelligence.">
 <meta name="author" content="Joudacasa">
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="Maya AI">
 <meta property="og:description" content="Maya - Sua assistente de IA do dia a dia programada para ser carinhosa e ajudante.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="logo.png">
+</head>
 <body>
 <div id="img-modal" class="hidden" onclick="this.classList.add('hidden')">
   <img id="img-modal-src" src="logo.png">
 </div>
 <div id="sidebar">
+  <script>
+    // Initial mobile check to avoid flash
+    if (window.innerWidth <= 768) {
+      document.currentScript.parentElement.classList.add('closed');
+    }
+  </script>
   <div class="sidebar-header">
     <div class="logo-flower">
       <svg width="28" height="28" viewBox="0 0 100 100">
@@ -221,6 +281,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <div id="chat-list"></div>
   <div class="sidebar-footer">Maya AI</div>
 </div>
+<div id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
 <!-- MAIN -->
 <div id="main">
@@ -281,8 +342,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
             <span class="model-opt-desc">Raciocinio avancado</span>
           </div>
           <div class="model-opt" data-model="jupiter" onclick="selectModel(this)">
-            <span class="model-opt-name">Jupiter</span>
-            <span class="model-opt-desc">Criativo e direto</span>
+            <span class="model-opt-name">Mini</span>
+            <span class="model-opt-desc">Rápido e direto</span>
           </div>
           <div class="model-opt" data-model="lite" onclick="selectModel(this)">
             <span class="model-opt-name">Lite</span>
@@ -293,23 +354,41 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </div>
   </div>
 </div>
+<script type="text/babel" data-type="module">
+    import { MayaAudio } from './assets/src/audio-engine.jsx';
+    import {  } from './assets/src/.jsx';
+    import { JavaEngine } from './assets/src/bridge.jsx';
+</script>
 <script>
 const HARDCODED_KEYS = {
-  groq: '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', // Removed Key, the AI works but the key not works
+  groq: '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',
 };
 const MODEL_CONFIGS = {
   auto:    { provider:'groq', model:'llama-3.3-70b-versatile',    label:'Auto'    },
-  flash:   { provider:'groq', model:'moonshotai/kimi-k2-instruct',    label:'Flash'   },
-  pro:     { provider:'groq', model:'groq/compound',          label:'Pro'     },
-  jupiter: { provider:'groq', model:'groq/compound-mini',      label:'Jupiter' },
-  lite:    { provider:'groq', model:'moonshotai/kimi-k2-instruct-0905', label:'Lite'    },
+  flash:   { provider:'groq', model:'llama-3.1-8b-instant',       label:'Flash'   },
+  pro:     { provider:'groq', model:'mixtral-8x7b-32768',         label:'Pro'     },
+  jupiter: { provider:'groq', model:'llama-3.3-70b-versatile',    label:'Mini' },
+  lite:    { provider:'groq', model:'gemma2-9b-it',               label:'Lite'    },
 };
 let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
 let currentChatId = null;
 let isLoading = false;
-let currentModelKey = localStorage.getItem('maya_model_key') || 'auto';
+let currentModelKey = localStorage.getItem('maya_model_key') || 'lite';
 let attachments = [];
 
+const Effects = {
+    playNotification() {
+        try {
+          const audio = new Audio('assets/src/notify.mp3');
+          audio.volume = 0.5;
+          audio.play();
+        } catch(e) {}
+    },
+    buttonGlow(elementId) {
+        const el = document.getElementById(elementId);
+        if(el) el.style.boxShadow = "0 0 20px var(--amber)";
+    }
+};
 const translations = {
   'pt-BR': {
     newChat: 'Nova conversa',
@@ -317,7 +396,7 @@ const translations = {
     welcomeTitle: 'Flores brilhando ao entardecer',
     welcomeSub: 'Como posso ajudar?',
     placeholder: 'Mensagem para Maya...',
-    hint: 'Enter para enviar · Shift+Enter para nova linha',
+    hint: 'Maya pode cometer erros, verifique as respostas',
     auto: 'Auto',
     flash: 'Flash',
     pro: 'Pro',
@@ -410,6 +489,11 @@ function init() {
   updateModelBtn();
   if (chats.length > 0) loadChat(chats[0].id);
   
+  // Open sidebar by default on desktop
+  if (window.innerWidth > 768) {
+    document.getElementById('sidebar').classList.remove('closed');
+  }
+  
   // Clipboard paste support
   window.addEventListener('paste', e => {
     const items = e.clipboardData.items;
@@ -467,6 +551,11 @@ function newChat() {
   saveChats();
   loadChat(id);
   hideChips(false);
+  
+  // Close sidebar on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.add('closed');
+  }
 }
 
 function loadChat(id) {
@@ -477,6 +566,11 @@ function loadChat(id) {
   renderChatList();
   renderMessages(chat.messages);
   hideChips(chat.messages.length > 0);
+  
+  // Close sidebar on mobile after selecting a chat
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.add('closed');
+  }
 }
 
 function deleteChat(id, e) {
@@ -1070,11 +1164,6 @@ function handleKey(e) {
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 140) + 'px';
-}
-
-function toggleSidebar() {
-  const s = document.getElementById('sidebar');
-  s.style.display = s.style.display === 'none' ? 'flex' : 'none';
 }
 
 function showToast(msg) {
