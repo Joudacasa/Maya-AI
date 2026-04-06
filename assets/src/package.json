@@ -26,6 +26,6 @@
   "author": "Joudacasa",
   "license": "Apache-2.0",
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^8.0.5"
   }
 }
