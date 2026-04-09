@@ -162,12 +162,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 /* ── CUSTOM MODEL DROPDOWN ── */
 .model-dropdown-wrap { position:relative; }
-#model-btn { display:flex; align-items:center; gap:6px; background:rgba(245,166,35,0.08); border:1px solid var(--border2); color:var(--amber); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; padding:5px 12px; border-radius:20px; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-#model-btn:hover { background:rgba(245,166,35,0.16); border-color:var(--amber); }
-#model-btn .fa-chevron-down { font-size:10px; transition:transform 0.2s; }
-#model-btn.open .fa-chevron-down { transform:rotate(180deg); }
-#model-menu { position:absolute; bottom:calc(100% + 8px); right:0; background:var(--bg2); border:1px solid var(--border2); border-radius:12px; padding:6px; min-width:200px; z-index:50; opacity:0; pointer-events:none; transform:translateY(8px); transition:all 0.18s; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
-#model-menu.open { opacity:1; pointer-events:all; transform:translateY(0); }
+.model-dropdown-wrap > button { display:flex; align-items:center; gap:6px; background:rgba(245,166,35,0.08); border:1px solid var(--border2); color:var(--amber); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; padding:5px 12px; border-radius:20px; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.model-dropdown-wrap > button:hover { background:rgba(245,166,35,0.16); border-color:var(--amber); }
+.model-dropdown-wrap > button .fa-chevron-down { font-size:10px; transition:transform 0.2s; }
+.model-dropdown-wrap > button.open .fa-chevron-down { transform:rotate(180deg); }
+.model-dd-menu { position:absolute; bottom:calc(100% + 8px); right:0; background:var(--bg2); border:1px solid var(--border2); border-radius:12px; padding:6px; min-width:220px; z-index:50; opacity:0; pointer-events:none; transform:translateY(8px); transition:all 0.18s; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+.model-dd-menu.open { opacity:1; pointer-events:all; transform:translateY(0); }
 .model-opt { display:flex; flex-direction:column; padding:9px 12px; border-radius:8px; cursor:pointer; transition:background 0.12s; }
 .model-opt:hover { background:var(--bg3); }
 .model-opt.active { background:var(--bg4); }
@@ -175,7 +175,6 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .model-opt.active .model-opt-name { color:var(--amber); }
 .model-opt-desc { font-size:11px; color:var(--text3); margin-top:1px; }
 .model-divider { height:1px; background:var(--border); margin:4px 0; }
-
 
 /* ── THINKING ── */
 .thinking { display:flex; gap:5px; align-items:center; padding:4px 0; }
@@ -227,7 +226,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   .chip { flex-shrink: 0; padding: 8px 14px; }
   
   .model-dropdown-wrap { position: static; }
-  #model-menu { right: 12px; left: 12px; width: auto; bottom: calc(100% + 12px); }
+  .model-dd-menu { right: 12px; left: 12px; width: auto; bottom: calc(100% + 12px); }
   
   .action-btn, #send-btn { min-width: 40px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
 }
@@ -308,7 +307,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <span class="chip" onclick="sendChip(this)">Crie um jogo</span>
       <span class="chip" onclick="sendChip(this)">Explique o que é uma API</span>
       <span class="chip" onclick="sendChip(this)">Crie uma musica</span>
-      <span class="chip" onclick="sendChip(this)">Crie um video</span>
+      <span class="chip" onclick="sendChip(this)">Crie um arquivo de texto</span>
     </div>
     <div id="attach-preview" class="attach-preview"></div>
     <div id="input-wrap">
@@ -321,74 +320,110 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </div>
     <input type="file" id="file-input" style="display:none" multiple accept="*/*" onchange="handleFiles(this.files)">
     <div id="bottom-bar">
-      <span class="input-hint">A Maya pode cometer erros, verifique as respostas</span>
-      <div class="model-dropdown-wrap">
-        <button id="model-btn" onclick="toggleModelMenu()">
-          <i class="fa-solid fa-microchip"></i>
-          <span id="model-btn-label">Auto</span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div id="model-menu">
-          <div class="model-opt active" data-model="auto" onclick="selectModel(this)">
-            <span class="model-opt-name">Auto</span>
-            <span class="model-opt-desc">Definido de acordo com você</span>
+      <span class="input-hint">Maya pode cometer erros, verifique as respostas</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <!-- Seletor de Modelo LLM -->
+        <div class="model-dropdown-wrap">
+          <button id="llm-btn" onclick="toggleLLMMenu()">
+            <i class="fa-solid fa-brain"></i>
+            <span id="llm-btn-label">Auto</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div id="llm-menu" class="model-dd-menu">
+            <div class="model-opt active" data-model="auto" onclick="selectLLM(this)">
+              <span class="model-opt-name">Auto</span>
+              <span class="model-opt-desc">Rápido e normal</span>
+            </div>
+            <div class="model-opt" data-model="fast" onclick="selectLLM(this)">
+              <span class="model-opt-name">Fast</span>
+              <span class="model-opt-desc">Rápido e preciso</span>
+            </div>
+            <div class="model-opt" data-model="pro" onclick="selectLLM(this)">
+              <span class="model-opt-name">Pro</span>
+              <span class="model-opt-desc">Raciocínio avançado</span>
+            </div>
+            <div class="model-opt" data-model="mini" onclick="selectLLM(this)">
+              <span class="model-opt-name">Mini</span>
+              <span class="model-opt-desc">Rápido e direto</span>
+            </div>
           </div>
-          <div class="model-opt" data-model="flash" onclick="selectModel(this)">
-            <span class="model-opt-name">Flash</span>
-            <span class="model-opt-desc">Rapido e preciso</span>
-          </div>
-          <div class="model-opt" data-model="pro" onclick="selectModel(this)">
-            <span class="model-opt-name">Pro</span>
-            <span class="model-opt-desc">Raciocinio avancado</span>
-          </div>
-          <div class="model-opt" data-model="jupiter" onclick="selectModel(this)">
-            <span class="model-opt-name">Mini</span>
-            <span class="model-opt-desc">Rápido e direto</span>
-          </div>
-          <div class="model-opt" data-model="lite" onclick="selectModel(this)">
-            <span class="model-opt-name">Lite</span>
-            <span class="model-opt-desc">Leve e eficiente</span>
+        </div>
+        <!-- Seletor de Tipo de IA -->
+        <div class="model-dropdown-wrap">
+          <button id="type-btn" onclick="toggleTypeMenu()">
+            <i class="fa-solid fa-microchip"></i>
+            <span id="type-btn-label">Auto</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div id="type-menu" class="model-dd-menu">
+            <div class="model-opt active" data-type="Auto" onclick="selectType(this)">
+              <span class="model-opt-name">Auto</span>
+              <span class="model-opt-desc">Rápido e normal</span>
+            </div>
+            <div class="model-opt" data-type="Fast" onclick="selectType(this)">
+              <span class="model-opt-name">Fast</span>
+              <span class="model-opt-desc">Rápido e preciso</span>
+            </div>
+            <div class="model-opt" data-type="Audio" onclick="selectType(this)">
+              <span class="model-opt-name">Audio</span>
+              <span class="model-opt-desc">Gere audio e musicas com praticidade</span>
+            </div>
+            <div class="model-opt" data-type="Image" onclick="selectType(this)">
+              <span class="model-opt-name">Imagem</span>
+              <span class="model-opt-desc">Gere imagens com praticidade</span>
+            </div>
+            <div class="model-opt" data-type="Archives_creator" onclick="selectType(this)">
+              <span class="model-opt-name">Criador de arquivos</span>
+              <span class="model-opt-desc">Gere arquivos de texto e outros tipos com praticidade</span>
+            </div>
+            <div class="model-opt" data-type="Video" onclick="selectType(this)">
+              <span class="model-opt-name">Video</span>
+              <span class="model-opt-desc">Gere videos com praticidade</span>
+            </div>
+            <div class="model-opt" data-type="Code" onclick="selectType(this)">
+              <span class="model-opt-name">Código</span>
+              <span class="model-opt-desc">Gere códigos com o Claude 4.6 Sonnet</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<script type="text/babel" data-type="module">
-    import { MayaAudio } from './assets/src/audio-engine.jsx';
-    import {  } from './assets/src/.jsx';
-    import { JavaEngine } from './assets/src/bridge.jsx';
-</script>
+
 <script>
 const HARDCODED_KEYS = {
-  groq: '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',
+    groq: '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',
 };
-const MODEL_CONFIGS = {
-  auto:    { provider:'groq', model:'llama-3.3-70b-versatile',    label:'Auto'    },
-  flash:   { provider:'groq', model:'llama-3.1-8b-instant',       label:'Flash'   },
-  pro:     { provider:'groq', model:'mixtral-8x7b-32768',         label:'Pro'     },
-  jupiter: { provider:'groq', model:'llama-3.3-70b-versatile',    label:'Mini' },
-  lite:    { provider:'groq', model:'gemma2-9b-it',               label:'Lite'    },
+
+// ── LLM MODEL configs (seletor de modelo) ──
+const LLM_CONFIGS = {
+  auto: { model:'moonshotai/kimi-k2-instruct',  label:'Auto' },
+  fast: { model:'llama-3.3-70b-versatile',       label:'Fast' },
+  pro:  { model:'qwen/qwen3-32b',                label:'Pro'  },
+  mini: { model:'llama-3.1-8b-instant',          label:'Mini' },
 };
+
+// ── AI TYPE configs (seletor de tipo de IA) ──
+const TYPE_CONFIGS = {
+  Auto:             { model:'moonshotai/kimi-k2-instruct',  label:'Auto'               },
+  Fast:             { model:'llama-3.3-70b-versatile',      label:'Fast'               },
+  Audio:            { model:'llama-3.3-70b-versatile',      label:'Audio'              },
+  Image:            { model:'llama-3.3-70b-versatile',      label:'Imagem'             },
+  Archives_creator: { model:'llama-3.1-70b-versatile',      label:'Criador de arquivos'},
+  Video:            { model:'llama-3.3-70b-versatile',      label:'Video'              },
+  Code:             { model:'llama-3.3-70b-versatile',      label:'Código'             },
+};
+
 let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
 let currentChatId = null;
 let isLoading = false;
-let currentModelKey = localStorage.getItem('maya_model_key') || 'lite';
+let currentLLMKey  = localStorage.getItem('maya_llm_key')  || 'auto';
+let currentTypeKey = localStorage.getItem('maya_type_key') || 'Auto';
 let attachments = [];
 
-const Effects = {
-    playNotification() {
-        try {
-          const audio = new Audio('assets/src/notify.mp3');
-          audio.volume = 0.5;
-          audio.play();
-        } catch(e) {}
-    },
-    buttonGlow(elementId) {
-        const el = document.getElementById(elementId);
-        if(el) el.style.boxShadow = "0 0 20px var(--amber)";
-    }
-};
+const userLang = navigator.language.startsWith('pt') ? 'pt-BR' : 'en';
+
 const translations = {
   'pt-BR': {
     newChat: 'Nova conversa',
@@ -397,16 +432,13 @@ const translations = {
     welcomeSub: 'Como posso ajudar?',
     placeholder: 'Mensagem para Maya...',
     hint: 'Maya pode cometer erros, verifique as respostas',
-    auto: 'Auto',
-    flash: 'Flash',
-    pro: 'Pro',
-    jupiter: 'Jupiter',
-    lite: 'Lite',
-    autoDesc: 'Definido de acordo com você',
-    flashDesc: 'Rápido e preciso',
-    proDesc: 'Raciocínio avançado',
-    jupiterDesc: 'Criativo e direto',
-    liteDesc: 'Leve e eficiente',
+    Auto: 'Auto',
+    Fast: 'Fast',
+    Audio: 'Audio',
+    Image: 'Imagem',
+    Archives_creator: 'Criador de arquivos',
+    Video: 'Video',
+    Code: 'Código',
     renomear: 'Renomear',
     apagar: 'Apagar',
     copiar: 'Copiar',
@@ -417,27 +449,24 @@ const translations = {
     anexar: 'Anexar arquivo',
     enviar: 'Enviar',
     gerandoImg: 'Gerando imagem...',
-    imgIndisp: 'Imagem indisponível. Tente novamente.',
+    imgIndisp: 'Erro de imagem. Tente novamente.',
     copyCode: 'Copiar',
     downloadHtml: 'HTML'
   },
   'en': {
     newChat: 'New chat',
     conversations: 'Chats',
-    welcomeTitle: 'Flowers glowing at dusk',
+    welcomeTitle: 'The sun is shining...',
     welcomeSub: 'How can I help you?',
     placeholder: 'Message Maya...',
-    hint: 'Enter to send · Shift+Enter for new line',
-    auto: 'Auto',
-    flash: 'Flash',
-    pro: 'Pro',
-    jupiter: 'Jupiter',
-    lite: 'Lite',
-    autoDesc: 'Best for your task',
-    flashDesc: 'Fast and accurate',
-    proDesc: 'Advanced reasoning',
-    jupiterDesc: 'Creative and direct',
-    liteDesc: 'Light and efficient',
+    hint: 'Maya may make mistakes, please check the answers',
+    Auto: 'Auto',
+    Fast: 'Fast',
+    Audio: 'Audio',
+    Image: 'Image',
+    Archives_creator: 'File Creator',
+    Video: 'Video',
+    Code: 'Code',
     renomear: 'Rename',
     apagar: 'Delete',
     copiar: 'Copy',
@@ -448,14 +477,13 @@ const translations = {
     anexar: 'Attach file',
     enviar: 'Send',
     gerandoImg: 'Generating image...',
-    imgIndisp: 'Image unavailable. Try again.',
+    imgIndisp: 'Image error. Try again.',
     copyCode: 'Copy',
     downloadHtml: 'HTML'
   }
 };
 
-const userLang = navigator.language.startsWith('pt') ? 'pt-BR' : 'en';
-const txt = (key) => translations[userLang][key] || translations['en'][key];
+const txt = (key) => (translations[userLang] || translations['en'])[key] || (translations['en'])[key] || key;
 
 function applyTranslations() {
   document.querySelector('.new-chat-btn').innerHTML = `<i class="fa-solid fa-plus"></i> ${txt('newChat')}`;
@@ -464,37 +492,23 @@ function applyTranslations() {
   document.querySelector('.welcome-sub').textContent = txt('welcomeSub');
   document.getElementById('prompt').placeholder = txt('placeholder');
   document.querySelector('.input-hint').textContent = txt('hint');
-  document.getElementById('model-btn-label').textContent = txt('auto');
-  
-  // Model menu
-  const opts = document.querySelectorAll('.model-opt');
-  opts[0].querySelector('.model-opt-name').textContent = txt('auto');
-  opts[0].querySelector('.model-opt-desc').textContent = txt('autoDesc');
-  opts[1].querySelector('.model-opt-name').textContent = txt('flash');
-  opts[1].querySelector('.model-opt-desc').textContent = txt('flashDesc');
-  opts[2].querySelector('.model-opt-name').textContent = txt('pro');
-  opts[2].querySelector('.model-opt-desc').textContent = txt('proDesc');
-  opts[3].querySelector('.model-opt-name').textContent = txt('jupiter');
-  opts[3].querySelector('.model-opt-desc').textContent = txt('jupiterDesc');
-  opts[4].querySelector('.model-opt-name').textContent = txt('lite');
-  opts[4].querySelector('.model-opt-desc').textContent = txt('liteDesc');
 }
 
 function getKeys() {
   return HARDCODED_KEYS;
 }
+
 function init() {
   applyTranslations();
   renderChatList();
-  updateModelBtn();
+  updateLLMBtn();
+  updateTypeBtn();
   if (chats.length > 0) loadChat(chats[0].id);
   
-  // Open sidebar by default on desktop
   if (window.innerWidth > 768) {
     document.getElementById('sidebar').classList.remove('closed');
   }
   
-  // Clipboard paste support
   window.addEventListener('paste', e => {
     const items = e.clipboardData.items;
     for (let i = 0; i < items.length; i++) {
@@ -511,36 +525,65 @@ function toggleSidebar() {
   s.classList.toggle('closed');
 }
 
-function toggleModelMenu() {
-  const btn = document.getElementById('model-btn');
-  const menu = document.getElementById('model-menu');
+// ── LLM dropdown ──────────────────────────────────────────
+function toggleLLMMenu() {
+  const btn = document.getElementById('llm-btn');
+  const menu = document.getElementById('llm-menu');
+  // close type menu
+  document.getElementById('type-btn').classList.remove('open');
+  document.getElementById('type-menu').classList.remove('open');
   btn.classList.toggle('open');
   menu.classList.toggle('open');
 }
-
-function selectModel(el) {
-  document.querySelectorAll('.model-opt').forEach(o => o.classList.remove('active'));
+function selectLLM(el) {
+  document.querySelectorAll('#llm-menu .model-opt').forEach(o => o.classList.remove('active'));
   el.classList.add('active');
-  currentModelKey = el.dataset.model;
-  localStorage.setItem('maya_model_key', currentModelKey);
-  updateModelBtn();
-  toggleModelMenu();
+  currentLLMKey = el.dataset.model;
+  localStorage.setItem('maya_llm_key', currentLLMKey);
+  updateLLMBtn();
+  toggleLLMMenu();
 }
-
-function updateModelBtn() {
-  const labelKey = currentModelKey === 'auto' ? 'auto' : currentModelKey;
-  const label = txt(labelKey) || MODEL_CONFIGS[currentModelKey]?.label || 'Auto';
-  document.getElementById('model-btn-label').textContent = label;
-  document.querySelectorAll('.model-opt').forEach(o => {
-    o.classList.toggle('active', o.dataset.model === currentModelKey);
+function updateLLMBtn() {
+  const cfg = LLM_CONFIGS[currentLLMKey] || LLM_CONFIGS['auto'];
+  document.getElementById('llm-btn-label').textContent = cfg.label;
+  document.querySelectorAll('#llm-menu .model-opt').forEach(o => {
+    o.classList.toggle('active', o.dataset.model === currentLLMKey);
   });
 }
 
-// close menu on outside click
+// ── Type dropdown ─────────────────────────────────────────
+function toggleTypeMenu() {
+  const btn = document.getElementById('type-btn');
+  const menu = document.getElementById('type-menu');
+  // close llm menu
+  document.getElementById('llm-btn').classList.remove('open');
+  document.getElementById('llm-menu').classList.remove('open');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function selectType(el) {
+  document.querySelectorAll('#type-menu .model-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  currentTypeKey = el.dataset.type;
+  localStorage.setItem('maya_type_key', currentTypeKey);
+  updateTypeBtn();
+  toggleTypeMenu();
+}
+function updateTypeBtn() {
+  const cfg = TYPE_CONFIGS[currentTypeKey] || TYPE_CONFIGS['Auto'];
+  document.getElementById('type-btn-label').textContent = cfg.label;
+  document.querySelectorAll('#type-menu .model-opt').forEach(o => {
+    o.classList.toggle('active', o.dataset.type === currentTypeKey);
+  });
+}
+
+// close menus on outside click
 document.addEventListener('click', e => {
   if (!e.target.closest('.model-dropdown-wrap')) {
-    document.getElementById('model-btn').classList.remove('open');
-    document.getElementById('model-menu').classList.remove('open');
+    document.getElementById('llm-btn').classList.remove('open');
+    document.getElementById('llm-menu').classList.remove('open');
+    document.getElementById('type-btn').classList.remove('open');
+    document.getElementById('type-menu').classList.remove('open');
   }
 });
 
@@ -552,7 +595,6 @@ function newChat() {
   loadChat(id);
   hideChips(false);
   
-  // Close sidebar on mobile
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.add('closed');
   }
@@ -567,7 +609,6 @@ function loadChat(id) {
   renderMessages(chat.messages);
   hideChips(chat.messages.length > 0);
   
-  // Close sidebar on mobile after selecting a chat
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.add('closed');
   }
@@ -668,7 +709,6 @@ function appendMessage(role, content, scroll = true, idx = null) {
 }
 
 function buildActions(actEl, role, msgDiv, content) {
-  // copy for both
   const copyBtn = document.createElement('button');
   copyBtn.className = 'msg-act';
   copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar';
@@ -723,7 +763,6 @@ function startEditMsg(msgDiv, originalContent, editBtn) {
     if (!newContent) return;
     textarea.remove(); btns.remove();
     textEl.style.display = ''; actEl.style.display = '';
-    // update in chat history and re-send
     const chat = getCurrentChat();
     if (!chat) return;
     const msgIdx = parseInt(msgDiv.dataset.idx ?? -1);
@@ -733,7 +772,6 @@ function startEditMsg(msgDiv, originalContent, editBtn) {
       saveChats();
     }
     renderMsgContent(textEl, newContent);
-    // remove subsequent messages from DOM
     let next = msgDiv.nextSibling;
     while (next) { const n = next.nextSibling; next.remove(); next = n; }
     sendFromEdit(newContent);
@@ -782,7 +820,6 @@ function renderMsgContent(container, raw) {
 
 function addCopyBtns(el) {
   el.querySelectorAll('pre').forEach(pre => {
-    // add download as HTML button if it's HTML
     const code = pre.querySelector('code');
     const codeText = code ? code.textContent : pre.textContent;
     const isHtml = codeText.trim().startsWith('<!') || codeText.trim().startsWith('<html') || codeText.includes('<body');
@@ -838,7 +875,6 @@ function buildFileCard(fname, content) {
   const icon = iconMap[ext] || 'fa-solid fa-file';
   
   let blob;
-  // Se parecer Base64 e for um arquivo binário, tenta converter
   const isBinary = ['midi', 'mid', 'mp3', 'wav', 'pdf', 'zip', 'jpg', 'png'].includes(ext);
   if (isBinary && /^[A-Za-z0-9+/=]+$/.test(content.trim().replace(/\s/g, ''))) {
     try {
@@ -874,7 +910,6 @@ function buildImageEl(url) {
     document.getElementById('messages').scrollTop = 99999;
   };
   img.onerror = () => {
-    // retry once with different seed
     const newUrl = url.replace(/seed=\d+/, 'seed=' + Math.floor(Math.random()*99999));
     const img2 = new Image();
     img2.className = 'msg-image'; img2.alt = 'Imagem gerada';
@@ -891,21 +926,14 @@ function buildImageEl(url) {
 
 function mdToHtml(text) {
   let o = escHtml(text);
-  // code blocks
   o = o.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, l, c) => `<pre><code>${c.trim()}</code></pre>`);
-  // inline code
   o = o.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-  // bold
   o = o.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // italic
   o = o.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-  // lists
   o = o.replace(/^\s*[\-\*]\s+(.+)$/gm, '<li>$1</li>');
   o = o.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-  // links
   o = o.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   o = o.replace(/(?<!["\(])(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-  // spacing
   o = o.replace(/\n/g, '<br>');
   return o;
 }
@@ -968,7 +996,6 @@ async function sendMessage() {
   attachments = [];
   renderAttachPreview();
 
-  // build display content
   let displayContent = userContent;
   if (attachSnapshot.length) displayContent += '\n[' + attachSnapshot.map(a => a.name).join(', ') + ']';
 
@@ -990,9 +1017,12 @@ async function sendMessage() {
 }
 
 async function callAPI(chat, userMsg, isNew, imgs = [], files = []) {
-  const isImageReq = /\b(gera|cria|faz|desenha|imagem|foto|ilustra|picture|image|draw|generate image|painting|portrait|wallpaper|scene)\b/i.test(userMsg)
+  const isImageMode = currentTypeKey === 'Image';
+  const isImageReq = isImageMode || (
+    /\b(gera|cria|faz|desenha|imagem|foto|ilustra|picture|image|draw|generate image|painting|portrait|wallpaper|scene)\b/i.test(userMsg)
     && !/\b(arquivo|file|código|code|script|html|css|js|python|texto|text|escreva|write|read)\b/i.test(userMsg)
-    && imgs.length === 0;
+    && imgs.length === 0
+  );
 
   const thinkDiv = document.createElement('div');
   thinkDiv.className = 'msg assistant';
@@ -1031,13 +1061,25 @@ async function callAPI(chat, userMsg, isNew, imgs = [], files = []) {
 }
 
 async function callLLM(chat, userMsg, imgs = [], files = []) {
-  const cfg = MODEL_CONFIGS[currentModelKey];
+  // O modelo LLM vem do seletor de modelo; o tipo afeta o system prompt
+  const llmCfg  = LLM_CONFIGS[currentLLMKey]  || LLM_CONFIGS['auto'];
+  const typeCfg = TYPE_CONFIGS[currentTypeKey] || TYPE_CONFIGS['Auto'];
   const keys = getKeys();
-  const provider = cfg.provider;
-  const model = cfg.model;
+  // Use o modelo do seletor de tipo se for Code/Archives (modelos especializados), senão usa o LLM
+  const model = (currentTypeKey === 'Code' || currentTypeKey === 'Archives_creator')
+    ? typeCfg.model
+    : llmCfg.model;
 
-  const systemPrompt = `You are Maya, a highly intelligent and helpful AI assistant. 
-IMPORTANT: You MUST respond in the language "${userLang}" (the user's browser language).
+  const modeHints = {
+    Code: 'You are in CODE mode. Prioritize generating clean, well-commented code. Always wrap code in proper markdown code blocks with the language specified.',
+    Archives_creator: 'You are in FILE CREATOR mode. When the user asks for a file, always use the [FILE:filename.ext]...[/FILE] format so they can download it.',
+    Audio: 'You are in AUDIO mode. Help the user create music, audio scripts, or MIDI-compatible notation. For MIDI, generate ABC notation or describe the musical structure clearly.',
+    Video: 'You are in VIDEO mode. Help the user create video scripts, storyboards, shot lists, and descriptions.',
+  };
+  const modeHint = modeHints[currentTypeKey] ? '\n\n' + modeHints[currentTypeKey] : '';
+
+  const systemPrompt = `You are Maya, a highly intelligent and helpful AI assistant.
+IMPORTANT: You MUST respond in the language "${userLang}" (the user's browser language).${modeHint}
 
 Your capabilities:
 1. Formatting: Use Markdown for bold (**text**), italics (*text*), and lists (- item).
@@ -1054,10 +1096,8 @@ content
 
 Be concise, accurate, and empathetic. Always prioritize the user's request.`;
 
-  // build messages
   const historyMsgs = chat.messages.slice(-16).map(m => ({ role: m.role, content: m.content }));
 
-  // if images attached, add them to last user message for vision
   if (imgs.length > 0) {
     const lastUser = [...historyMsgs].reverse().find(m => m.role === 'user');
     if (lastUser) {
@@ -1069,7 +1109,6 @@ Be concise, accurate, and empathetic. Always prioritize the user's request.`;
     }
   }
 
-  // add file contents as text
   let fileContext = '';
   for (const f of files) {
     if (f.mimeType.startsWith('text/') || f.name.endsWith('.txt') || f.name.endsWith('.md') || f.name.endsWith('.json') || f.name.endsWith('.csv')) {
@@ -1087,16 +1126,14 @@ Be concise, accurate, and empathetic. Always prioritize the user's request.`;
     if (lastUser && typeof lastUser.content === 'string') lastUser.content += fileContext;
   }
 
-  // Force Groq
   if (keys.groq) {
     return await callOpenAI(model, systemPrompt, historyMsgs, keys.groq, 'https://api.groq.com/openai/v1/chat/completions');
   } else {
-    throw new Error('Chave Groq não encontrada em HARDCODED_KEYS.');
+    throw new Error('Chave Groq não encontrada.');
   }
 }
 
 async function callOpenAI(model, system, messages, key, url) {
-  // normalize messages (anthropic vision format -> openai format)
   const normalized = messages.map(m => ({
     role: m.role,
     content: Array.isArray(m.content) ? m.content : m.content
@@ -1120,6 +1157,7 @@ function readFileAsText(file) {
     r.readAsText(file);
   });
 }
+
 async function autoTitle(chat, firstMsg) {
   try {
     const keys = getKeys();
