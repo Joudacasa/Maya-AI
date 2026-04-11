@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maya AI</title>
+<title>Maya AI - The open-source AI</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/images/logo.png">
@@ -303,10 +303,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <div id="input-area">
     <div id="chips-row">
       <span class="chip" onclick="sendChip(this)">Escreva um README.md</span>
-      <span class="chip" onclick="sendChip(this)">Gere uma imagem de um por do sol</span>
-      <span class="chip" onclick="sendChip(this)">Crie um jogo</span>
+      <span class="chip" onclick="sendChip(this)">Gere uma imagem de um pôr do sol</span>
+      <span class="chip" onclick="sendChip(this)">Programe um jogo</span>
       <span class="chip" onclick="sendChip(this)">Explique o que é uma API</span>
-      <span class="chip" onclick="sendChip(this)">Crie uma musica</span>
+      <span class="chip" onclick="sendChip(this)">Crie uma musica em MIDI</span>
       <span class="chip" onclick="sendChip(this)">Crie um arquivo de texto</span>
     </div>
     <div id="attach-preview" class="attach-preview"></div>
@@ -396,7 +396,6 @@ const HARDCODED_KEYS = {
     groq: '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',
 };
 
-// ── LLM MODEL configs (seletor de modelo) ──
 const LLM_CONFIGS = {
   auto: { model:'moonshotai/kimi-k2-instruct',  label:'Auto' },
   fast: { model:'llama-3.3-70b-versatile',       label:'Fast' },
@@ -404,7 +403,6 @@ const LLM_CONFIGS = {
   mini: { model:'llama-3.1-8b-instant',          label:'Mini' },
 };
 
-// ── AI TYPE configs (seletor de tipo de IA) ──
 const TYPE_CONFIGS = {
   Auto:             { model:'moonshotai/kimi-k2-instruct',  label:'Auto'               },
   Fast:             { model:'llama-3.3-70b-versatile',      label:'Fast'               },
