@@ -393,7 +393,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 <script>
 const HARDCODED_KEYS = {
-    groq: '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',
+    groq: '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',
 };
 
 const LLM_CONFIGS = {
@@ -405,12 +405,12 @@ const LLM_CONFIGS = {
 
 const TYPE_CONFIGS = {
   Auto:             { model:'moonshotai/kimi-k2-instruct',  label:'Auto'               },
-  Fast:             { model:'llama-3.3-70b-versatile',      label:'Fast'               },
-  Audio:            { model:'llama-3.3-70b-versatile',      label:'Audio'              },
-  Image:            { model:'llama-3.3-70b-versatile',      label:'Imagem'             },
-  Archives_creator: { model:'llama-3.1-70b-versatile',      label:'Criador de arquivos'},
-  Video:            { model:'llama-3.3-70b-versatile',      label:'Video'              },
-  Code:             { model:'llama-3.3-70b-versatile',      label:'Código'             },
+  Fast:             { model:'groq/compound-mini',      label:'Fast'               },
+  Audio:            { model:'moonshotai/kimi-k2-instruct-0905',      label:'Audio'              },
+  Image:            { model:'groq/compound',      label:'Imagem'             },
+  Archives_creator: { model:'meta-llama/llama-prompt-guard-2-22m',      label:'Criador de arquivos'},
+  Video:            { model:'Veo 3.6',      label:'Video'              },
+  Code:             { model:'Claude 4.6 Sonnet',      label:'Código'             },
 };
 
 let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
