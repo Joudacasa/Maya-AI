@@ -393,7 +393,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 <script>
 const HARDCODED_KEYS = {
-    groq: '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',
+    groq: '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',
 };
 
 const LLM_CONFIGS = {
@@ -408,9 +408,9 @@ const TYPE_CONFIGS = {
   Fast:             { model:'groq/compound-mini',      label:'Fast'               },
   Audio:            { model:'moonshotai/kimi-k2-instruct-0905',      label:'Audio'              },
   Image:            { model:'groq/compound',      label:'Imagem'             },
-  Archives_creator: { model:'meta-llama/llama-prompt-guard-2-22m',      label:'Criador de arquivos'},
-  Video:            { model:'Veo 3.6',      label:'Video'              },
-  Code:             { model:'Claude 4.6 Sonnet',      label:'Código'             },
+  Archives_creator: { model:'',      label:'Criador de arquivos'},
+  Video:            { model:'Veo 3.1',      label:'Video'              },
+  Code:             { model:'claude-3-5-sonnet-20241022',      label:'Código'             },
 };
 
 let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
