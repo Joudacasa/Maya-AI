@@ -125,13 +125,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 /* Sidebar tabs */
 .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink:0; }
 .sidebar-tab {
-  flex: 1; padding: 10px 0; text-align: center; font-size: 12px; font-weight: 500;
+  flex: 1; padding: 8px 0; text-align: center; font-size: 10px; font-weight: 500;
   color: var(--text3); cursor: pointer; transition: all 0.15s; border-bottom: 2px solid transparent;
   margin-bottom: -1px;
 }
 .sidebar-tab:hover { color: var(--text2); }
 .sidebar-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
-.sidebar-tab i { font-size: 13px; display: block; margin-bottom: 2px; }
+.sidebar-tab i { font-size: 12px; display: block; margin-bottom: 2px; }
 
 .new-chat-btn { margin:10px; padding:10px 14px; background:linear-gradient(135deg,var(--amber),var(--orange)); color:#000; font-family:'DM Sans',sans-serif; font-weight:600; font-size:13px; border:none; border-radius:var(--radius); cursor:pointer; display:flex; align-items:center; gap:8px; transition:opacity 0.2s; }
 .new-chat-btn:hover { opacity:0.88; }
@@ -174,6 +174,53 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .favorites-panel { flex: 1; overflow-y: auto; padding: 12px 10px; }
 .fav-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 10px; color: var(--text3); font-size: 13px; text-align: center; padding: 20px; }
 .fav-empty i { font-size: 28px; opacity: 0.4; }
+
+/* Projects tab */
+.projects-panel { flex: 1; overflow-y: auto; padding: 10px 8px; }
+.projects-panel::-webkit-scrollbar { width:3px; }
+.projects-panel::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
+.project-new-btn { margin:0 0 10px; padding:9px 14px; border:1px dashed var(--border2); border-radius:10px; font-size:12px; color:var(--text3); cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.15s; background:none; width:100%; font-family:'DM Sans',sans-serif; }
+.project-new-btn:hover { border-color:var(--amber); color:var(--amber); background:rgba(245,166,35,0.04); }
+.project-item { border-radius:10px; margin-bottom:6px; overflow:hidden; border:1px solid var(--border); }
+.project-header { display:flex; align-items:center; gap:9px; padding:10px 10px; cursor:pointer; transition:background 0.15s; position:relative; }
+.project-header:hover { background:var(--bg3); }
+.project-header.active-proj { background:var(--bg4); }
+.project-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.project-name { font-size:13px; font-weight:500; color:var(--text); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.project-count { font-size:10px; color:var(--text3); background:var(--bg4); border-radius:20px; padding:1px 7px; }
+.project-chevron { font-size:10px; color:var(--text3); transition:transform 0.2s; flex-shrink:0; }
+.project-chevron.open { transform:rotate(180deg); }
+.project-actions { display:none; gap:2px; }
+.project-header:hover .project-actions { display:flex; }
+.project-act-btn { background:none; border:none; color:var(--text3); cursor:pointer; font-size:11px; padding:3px 5px; border-radius:4px; transition:color 0.15s; }
+.project-act-btn:hover { color:var(--amber); }
+.project-act-btn.del:hover { color:#e05555; }
+.project-chats { background:var(--bg2); border-top:1px solid var(--border); padding:4px 6px; display:none; }
+.project-chats.open { display:block; }
+.project-chat-item { display:flex; align-items:center; gap:7px; padding:7px 8px; border-radius:7px; cursor:pointer; font-size:12px; color:var(--text2); transition:all 0.12s; }
+.project-chat-item:hover { background:var(--bg3); color:var(--text); }
+.project-chat-item.active { color:var(--amber); }
+.project-chat-item i { font-size:11px; color:var(--text3); flex-shrink:0; }
+.project-chat-item.active i { color:var(--amber); }
+.project-chat-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+.project-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:10px; color:var(--text3); font-size:13px; text-align:center; padding:20px; }
+.project-empty i { font-size:28px; opacity:0.4; }
+/* Project modal */
+.proj-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:450; backdrop-filter:blur(4px); }
+.proj-modal-overlay.hidden { display:none; }
+.proj-modal { background:var(--bg2); border:1px solid var(--border2); border-radius:16px; padding:28px 24px; width:360px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.6); animation:modalIn 0.2s ease; }
+.proj-modal h3 { font-size:16px; font-weight:600; color:var(--text); margin-bottom:16px; }
+.proj-modal-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; font-weight:500; }
+.proj-modal input { width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:8px; padding:10px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; margin-bottom:14px; transition:border-color 0.2s; }
+.proj-modal input:focus { border-color:var(--amber); }
+.proj-color-row { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+.proj-color-dot { width:22px; height:22px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all 0.15s; flex-shrink:0; }
+.proj-color-dot.selected { border-color:#fff; transform:scale(1.2); }
+.proj-modal-btns { display:flex; gap:8px; }
+.proj-modal-btns button { flex:1; padding:9px; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:opacity 0.2s; border:none; }
+.proj-modal-btns .btn-save { background:linear-gradient(135deg,var(--amber),var(--orange)); color:#000; }
+.proj-modal-btns .btn-cancel { background:var(--bg3); border:1px solid var(--border2); color:var(--text2); }
+.proj-modal-btns button:hover { opacity:0.85; }
 
 .sidebar-footer { padding:10px 14px; border-top:1px solid var(--border); font-size:11px; color:var(--text3); text-align:center; }
 
@@ -428,7 +475,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <span class="api-modal-logo-name">Maya AI</span>
     </div>
     <div class="api-modal-title">Configure sua chave de API</div>
-    <div class="api-modal-sub">Para usar a Maya, você precisa de uma chave de API. Ela é salva apenas no seu navegador e nunca compartilhada.</div>
+    <div class="api-modal-sub">Para usar a Maya, você precisa de uma chave de API. Ela é salva no seu navegador e permanece entre sessões — só você tem acesso.</div>
     <div class="api-provider-tabs" id="provider-tabs">
       <div class="api-provider-tab active" data-provider="groq" onclick="selectProvider(this)">Groq</div>
       <div class="api-provider-tab" data-provider="openrouter" onclick="selectProvider(this)">OpenRouter</div>
@@ -498,7 +545,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <i class="fa-solid fa-sliders"></i> Config. Desenvolvedor
     </div>
     <div class="profile-menu-divider"></div>
-    <div class="profile-menu-item danger" onclick="showApiModal()">
+    <div class="profile-menu-item danger" id="change-key-menu-item" style="display:none;" onclick="showApiModal()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i> Trocar chave de API
     </div>
   </div>
@@ -510,6 +557,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </div>
     <div class="sidebar-tab" data-tab="explore" onclick="switchTab(this)">
       <i class="fa-solid fa-compass"></i>Explorar
+    </div>
+    <div class="sidebar-tab" data-tab="projects" onclick="switchTab(this)">
+      <i class="fa-solid fa-folder"></i>Projetos
     </div>
     <div class="sidebar-tab" data-tab="favorites" onclick="switchTab(this)">
       <i class="fa-regular fa-star"></i>Favoritos
@@ -559,6 +609,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <div class="explore-card-title">Resumo de IA</div>
         <div class="explore-card-desc">Conceitos de machine learning simplificados</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Projects Panel -->
+  <div class="tab-panel" id="tab-projects">
+    <div class="projects-panel" id="projects-panel">
+      <!-- rendered by JS -->
     </div>
   </div>
 
@@ -685,6 +742,21 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   </div>
 </div>
 
+<!-- Project Modal -->
+<div class="proj-modal-overlay hidden" id="proj-modal-overlay" onclick="closeProjModalIfOutside(event)">
+  <div class="proj-modal">
+    <h3 id="proj-modal-title">Novo Projeto</h3>
+    <div class="proj-modal-label">Nome do projeto</div>
+    <input type="text" id="proj-name-input" placeholder="Ex: Meu App, Trabalho..." maxlength="40">
+    <div class="proj-modal-label">Cor</div>
+    <div class="proj-color-row" id="proj-color-row"></div>
+    <div class="proj-modal-btns">
+      <button class="btn-cancel" onclick="closeProjModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveProjModal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── STATE ─────────────────────────────────────────────────
 const LLM_CONFIGS = {
@@ -703,16 +775,16 @@ const TYPE_CONFIGS = {
   Code:             { model:'claude-3-5-sonnet-20241022',        label:'Código'             },
 };
 
-// Provider configs (not stored cross-user, only in sessionStorage = browser tab only)
+// Provider configs - API keys stored in localStorage (per-browser, not shared between users)
 const PROVIDER_CONFIGS = {
   groq:        { name:'Groq', placeholder:'gsk_...', hint:'Obtenha em <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>', baseUrl:'https://api.groq.com/openai/v1/chat/completions', defaultModel:'moonshotai/kimi-k2-instruct' },
   openrouter:  { name:'OpenRouter', placeholder:'sk-or-...', hint:'Obtenha em <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>', baseUrl:'https://openrouter.ai/api/v1/chat/completions', defaultModel:'openai/gpt-4o-mini' },
   huggingface: { name:'HuggingFace', placeholder:'hf_...', hint:'Obtenha em <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a>', baseUrl:'https://api-inference.huggingface.co/v1/chat/completions', defaultModel:'meta-llama/Meta-Llama-3-8B-Instruct' },
 };
 
-// Keys stored in sessionStorage (tab-only, not shared across users or even tabs)
-function getSessionKey(provider) { try { return sessionStorage.getItem('maya_apikey_' + provider) || ''; } catch { return ''; } }
-function setSessionKey(provider, key) { try { sessionStorage.setItem('maya_apikey_' + provider, key); } catch {} }
+// Keys stored in localStorage (persists between sessions, private to this browser)
+function getSessionKey(provider) { try { return localStorage.getItem('maya_apikey_' + provider) || ''; } catch { return ''; } }
+function setSessionKey(provider, key) { try { localStorage.setItem('maya_apikey_' + provider, key); } catch {} }
 
 let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
 let currentChatId = null;
@@ -724,6 +796,10 @@ let devMode = localStorage.getItem('maya_dev_mode') === 'true';
 let customSystemPrompt = localStorage.getItem('maya_custom_system') || '';
 let customModelOverride = localStorage.getItem('maya_custom_model') || '';
 let favorites = JSON.parse(localStorage.getItem('maya_favorites') || '[]');
+let projects = JSON.parse(localStorage.getItem('maya_projects') || '[]');
+let projModalEditId = null;
+let projSelectedColor = '#F5A623';
+const PROJECT_COLORS = ['#F5A623','#E8600A','#50c878','#4a9eff','#b06bff','#ff6b6b','#ffd93d','#6bcfff','#ff9de2','#a8ff78'];
 let attachments = [];
 
 const userLang = navigator.language.startsWith('pt') ? 'pt-BR' : 'en';
@@ -872,6 +948,8 @@ function applyDevMode() {
   badge.style.borderColor = devMode ? 'var(--amber)' : '';
   badge.style.color = devMode ? 'var(--amber)' : '';
   devItem.style.display = devMode ? '' : 'none';
+  const changeKeyItem = document.getElementById('change-key-menu-item');
+  if (changeKeyItem) changeKeyItem.style.display = devMode ? '' : 'none';
   indicator.classList.toggle('visible', devMode);
 }
 
@@ -913,13 +991,13 @@ function openSettings(tab) {
       <div class="settings-row" style="flex-direction:column;align-items:flex-start;">
         <div class="settings-row-label">Chave atual</div>
         <div class="settings-row-desc">${maskedKey}</div>
-        <button class="settings-btn secondary" style="margin-top:10px;" onclick="closeSettings();showApiModal()">Alterar chave →</button>
+        ${devMode ? '<button class="settings-btn secondary" style="margin-top:10px;" onclick="closeSettings();showApiModal()">Alterar chave →</button>' : '<div class="dev-locked"><i class="fa-solid fa-lock"></i> Ative o Modo Desenvolvedor para alterar a chave</div>'}
       </div>
       <div class="settings-section-title">Informações</div>
       <div class="settings-row">
         <div>
           <div class="settings-row-label">Privacidade da chave</div>
-          <div class="settings-row-desc">Sua chave é salva apenas na memória da aba atual (sessionStorage). Ela não é enviada a servidores da Maya, não persiste entre sessões e não é acessível por outros usuários.</div>
+          <div class="settings-row-desc">Sua chave é salva no localStorage do seu navegador. Ela não é enviada a servidores da Maya, fica salva entre sessões e não é acessível por outros usuários ou dispositivos.</div>
         </div>
       </div>
     `;
@@ -1137,6 +1215,8 @@ function renderChatList() {
     item.onclick = () => loadChat(chat.id);
     el.appendChild(item);
   });
+  // Also refresh projects panel if it exists
+  if (document.getElementById('projects-panel')) renderProjects();
 }
 
 // ── MESSAGES ──────────────────────────────────────────────
@@ -1604,8 +1684,178 @@ function showToast(msg) {
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
 // ── INIT ──────────────────────────────────────────────────
+// ── PROJECTS ─────────────────────────────────────────────
+function saveProjects() { localStorage.setItem('maya_projects', JSON.stringify(projects)); }
+
+function renderProjects() {
+  const panel = document.getElementById('projects-panel');
+  panel.innerHTML = '';
+
+  // New project button
+  const newBtn = document.createElement('button');
+  newBtn.className = 'project-new-btn';
+  newBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Novo projeto';
+  newBtn.onclick = () => openProjModal(null);
+  panel.appendChild(newBtn);
+
+  if (projects.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'project-empty';
+    empty.innerHTML = '<i class="fa-solid fa-folder-open"></i><div>Nenhum projeto ainda</div><div style="font-size:11px;">Crie um projeto para organizar suas conversas</div>';
+    panel.appendChild(empty);
+    return;
+  }
+
+  projects.forEach(proj => {
+    const item = document.createElement('div');
+    item.className = 'project-item';
+
+    // Count chats in this project
+    const projChats = chats.filter(c => c.projectId === proj.id);
+
+    item.innerHTML = `
+      <div class="project-header" onclick="toggleProjExpand('${proj.id}', this)">
+        <div class="project-dot" style="background:${proj.color}"></div>
+        <span class="project-name">${escHtml(proj.name)}</span>
+        <span class="project-count">${projChats.length}</span>
+        <div class="project-actions" onclick="event.stopPropagation()">
+          <button class="project-act-btn" title="Editar" onclick="openProjModal('${proj.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="project-act-btn del" title="Apagar" onclick="deleteProjConfirm('${proj.id}')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <i class="fa-solid fa-chevron-down project-chevron" id="pchev-${proj.id}"></i>
+      </div>
+      <div class="project-chats" id="pchats-${proj.id}">
+        <div style="padding:4px 4px 2px;display:flex;align-items:center;justify-content:space-between;">
+          <button class="project-new-btn" style="margin:0;padding:6px 10px;font-size:11px;border-radius:7px;" onclick="newChatInProject('${proj.id}')">
+            <i class="fa-solid fa-plus"></i> Nova conversa
+          </button>
+        </div>
+        ${projChats.length === 0
+          ? '<div style="font-size:11px;color:var(--text3);padding:8px 10px;text-align:center;">Sem conversas neste projeto</div>'
+          : projChats.map(c => `
+            <div class="project-chat-item ${c.id === currentChatId ? 'active' : ''}" onclick="loadChat('${c.id}')">
+              <i class="fa-regular fa-message"></i>
+              <span class="project-chat-name">${escHtml(c.title)}</span>
+            </div>`).join('')
+        }
+      </div>`;
+
+    panel.appendChild(item);
+
+    // Restore open state
+    if (proj.expanded) {
+      const chatsEl = document.getElementById('pchats-' + proj.id);
+      const chevEl  = document.getElementById('pchev-' + proj.id);
+      if (chatsEl) chatsEl.classList.add('open');
+      if (chevEl)  chevEl.classList.add('open');
+    }
+  });
+}
+
+function toggleProjExpand(id, headerEl) {
+  const proj = projects.find(p => p.id === id);
+  if (!proj) return;
+  proj.expanded = !proj.expanded;
+  saveProjects();
+  const chatsEl = document.getElementById('pchats-' + id);
+  const chevEl  = document.getElementById('pchev-' + id);
+  if (chatsEl) chatsEl.classList.toggle('open', proj.expanded);
+  if (chevEl)  chevEl.classList.toggle('open', proj.expanded);
+}
+
+function newChatInProject(projId) {
+  const id = Date.now().toString();
+  chats.unshift({ id, title: 'Nova conversa', messages: [], projectId: projId });
+  saveChats();
+  loadChat(id);
+  renderProjects();
+  switchTab(document.querySelector('.sidebar-tab[data-tab="chats"]'));
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.add('closed');
+}
+
+function deleteProjConfirm(id) {
+  const proj = projects.find(p => p.id === id);
+  if (!proj) return;
+  const projChats = chats.filter(c => c.projectId === id);
+  const msg = projChats.length > 0
+    ? `Apagar projeto "${proj.name}" e suas ${projChats.length} conversa(s)? Esta ação não pode ser desfeita.`
+    : `Apagar projeto "${proj.name}"?`;
+  if (!confirm(msg)) return;
+  // Remove project chats
+  chats = chats.filter(c => c.projectId !== id);
+  saveChats();
+  projects = projects.filter(p => p.id !== id);
+  saveProjects();
+  if (chats.find(c => c.id === currentChatId) === undefined) {
+    currentChatId = null;
+    document.getElementById('messages').style.display = 'none';
+    document.getElementById('welcome').style.display = 'flex';
+    document.getElementById('chat-title').textContent = 'Nova conversa';
+  }
+  renderChatList();
+  renderProjects();
+}
+
+function openProjModal(editId) {
+  projModalEditId = editId;
+  const modal = document.getElementById('proj-modal-overlay');
+  const titleEl = document.getElementById('proj-modal-title');
+  const nameInput = document.getElementById('proj-name-input');
+
+  // Render color dots
+  const colorRow = document.getElementById('proj-color-row');
+  colorRow.innerHTML = '';
+  const existingProj = editId ? projects.find(p => p.id === editId) : null;
+  projSelectedColor = existingProj ? existingProj.color : PROJECT_COLORS[0];
+  PROJECT_COLORS.forEach(c => {
+    const dot = document.createElement('div');
+    dot.className = 'proj-color-dot' + (c === projSelectedColor ? ' selected' : '');
+    dot.style.background = c;
+    dot.onclick = () => {
+      projSelectedColor = c;
+      document.querySelectorAll('.proj-color-dot').forEach(d => d.classList.remove('selected'));
+      dot.classList.add('selected');
+    };
+    colorRow.appendChild(dot);
+  });
+
+  if (existingProj) {
+    titleEl.textContent = 'Editar Projeto';
+    nameInput.value = existingProj.name;
+  } else {
+    titleEl.textContent = 'Novo Projeto';
+    nameInput.value = '';
+  }
+
+  modal.classList.remove('hidden');
+  setTimeout(() => nameInput.focus(), 50);
+}
+
+function closeProjModal() {
+  document.getElementById('proj-modal-overlay').classList.add('hidden');
+  projModalEditId = null;
+}
+function closeProjModalIfOutside(e) {
+  if (e.target === document.getElementById('proj-modal-overlay')) closeProjModal();
+}
+
+function saveProjModal() {
+  const name = document.getElementById('proj-name-input').value.trim();
+  if (!name) { document.getElementById('proj-name-input').focus(); return; }
+  if (projModalEditId) {
+    const proj = projects.find(p => p.id === projModalEditId);
+    if (proj) { proj.name = name; proj.color = projSelectedColor; }
+  } else {
+    projects.unshift({ id: Date.now().toString(), name, color: projSelectedColor, expanded: true });
+  }
+  saveProjects();
+  renderProjects();
+  closeProjModal();
+}
+
 function init() {
   renderChatList();
+  renderProjects();
   updateLLMBtn();
   updateTypeBtn();
   applyDevMode();
