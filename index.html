@@ -126,15 +126,15 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 }
 
 /* Sidebar tabs */
-.sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink:0; }
+.sidebar-tabs { display: flex; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); flex-shrink:0; background:var(--bg2); }
 .sidebar-tab {
-  flex: 1; padding: 8px 0; text-align: center; font-size: 10px; font-weight: 500;
+  flex: 1; padding: 9px 0; text-align: center; font-size: 10px; font-weight: 500;
   color: var(--text3); cursor: pointer; transition: all 0.15s; border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  margin-bottom: -1px; user-select:none;
 }
-.sidebar-tab:hover { color: var(--text2); }
-.sidebar-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
-.sidebar-tab i { font-size: 12px; display: block; margin-bottom: 2px; }
+.sidebar-tab:hover { color: var(--text2); background: var(--bg3); }
+.sidebar-tab.active { color: var(--amber); border-bottom-color: var(--amber); background: var(--bg3); }
+.sidebar-tab i { font-size: 13px; display: block; margin-bottom: 2px; }
 
 .new-chat-btn { margin:10px; padding:10px 14px; background:linear-gradient(135deg,var(--amber),var(--orange)); color:#000; font-family:'DM Sans',sans-serif; font-weight:600; font-size:13px; border:none; border-radius:var(--radius); cursor:pointer; display:flex; align-items:center; gap:8px; transition:opacity 0.2s; }
 .new-chat-btn:hover { opacity:0.88; }
@@ -259,8 +259,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .msg.user .msg-text { white-space:pre-wrap; }
 .msg-text p { margin-bottom: 12px; }
 .msg-text p:last-child { margin-bottom: 0; }
-.msg-text ul, .msg-text ol { margin: 8px 0 16px 24px; }
-.msg-text li { margin-bottom: 4px; }
+.msg-text ul, .msg-text ol { margin: 4px 0 8px 0; padding:0; }
+.msg-text li { margin-bottom: 2px; line-height:1.6; }
 .msg-text strong { color: var(--amber-light); font-weight: 600; }
 .msg-text em { color: var(--text2); }
 .msg-actions { opacity:0; transition:opacity 0.15s; display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
@@ -333,12 +333,17 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .model-opt.active .model-opt-name { color:var(--amber); }
 .model-opt-desc { font-size:11px; color:var(--text3); margin-top:1px; }
 
-/* ── THINKING ── */
-.thinking { display:flex; gap:5px; align-items:center; padding:4px 0; }
-.thinking span { width:6px; height:6px; border-radius:50%; background:var(--amber); animation:bounce 1.2s infinite; }
-.thinking span:nth-child(2) { animation-delay:0.2s; }
-.thinking span:nth-child(3) { animation-delay:0.4s; }
-@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+/* ── TYPING INDICATOR (Gemini-style) ── */
+.typing-indicator { display:flex; align-items:center; gap:6px; padding:4px 0; }
+.typing-dot { width:8px; height:8px; border-radius:50%; background:var(--amber); animation:typingPulse 1.4s ease-in-out infinite; }
+.typing-dot:nth-child(2) { animation-delay:0.2s; background:var(--amber-deep); }
+.typing-dot:nth-child(3) { animation-delay:0.4s; background:var(--orange); }
+.typing-label { font-size:11px; color:var(--text3); margin-left:2px; animation:typingFade 1.4s ease-in-out infinite; }
+@keyframes typingPulse { 0%,60%,100%{transform:scale(1);opacity:0.5} 30%{transform:scale(1.4);opacity:1} }
+@keyframes typingFade { 0%,100%{opacity:0.4} 50%{opacity:1} }
+@keyframes msgReveal { from{opacity:0;transform:translateY(8px) scale(0.98)} to{opacity:1;transform:none} }
+/* Sidebar divider between tabs and content */
+.sidebar-tabs-divider { height:1px; background:var(--border); flex-shrink:0; }
 
 /* ── IMAGE MODAL ── */
 #img-modal { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; z-index:200; cursor:zoom-out; }
@@ -439,25 +444,51 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .key-status.none { background:rgba(200,80,80,0.1); border:1px solid rgba(200,80,80,0.2); color:#e05555; }
 .key-status i { font-size:9px; }
 
-/* ── MOBILE ── */
+/* ── PHOTO CROPPER ── */
+#cropper-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:600; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+#cropper-overlay.hidden { display:none; }
+#cropper-title { color:var(--amber); font-size:16px; font-weight:600; }
+#cropper-container { position:relative; width:280px; height:280px; overflow:hidden; border-radius:12px; border:2px solid var(--border2); background:#000; touch-action:none; }
+#cropper-img { position:absolute; cursor:move; max-width:none; user-select:none; transform-origin:0 0; }
+#cropper-circle { position:absolute; inset:0; border-radius:50%; border:3px solid var(--amber); pointer-events:none; box-shadow:0 0 0 9999px rgba(0,0,0,0.5); }
+.cropper-controls { display:flex; gap:10px; align-items:center; }
+.cropper-controls label { color:var(--text2); font-size:12px; }
+#cropper-zoom { width:140px; accent-color:var(--amber); }
+.cropper-btns { display:flex; gap:10px; }
+.cropper-btns button { padding:9px 22px; border-radius:9px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:13px; cursor:pointer; border:none; transition:opacity 0.2s; }
+.cropper-save { background:linear-gradient(135deg,var(--amber),var(--orange)); color:#000; }
+.cropper-cancel { background:var(--bg3); border:1px solid var(--border2) !important; color:var(--text2); }
+.cropper-btns button:hover { opacity:0.85; }
+
+/* ── LIST COMPACT ── */
+.msg-text .msg-list { margin: 4px 0 8px 18px; padding:0; }
+.msg-text .msg-list li { margin-bottom: 2px; line-height:1.6; }
+.msg-text .msg-list li + li { margin-top: 0; }
+
+/* ── MOBILE ── *//* ── MOBILE ── */
 @media (max-width: 768px) {
-  :root { --sidebar: 280px; }
+  :root { --sidebar: 285px; }
   #sidebar { position:fixed; top:0; left:0; bottom:0; z-index:150; box-shadow:20px 0 50px rgba(0,0,0,0.5); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   #sidebar.closed { transform:translateX(-100%); margin-left:0; }
   #main { margin-left:0 !important; }
-  .msg { padding:12px 16px; gap:8px; }
-  .msg-avatar { width:24px; height:24px; font-size:10px; }
+  .msg { padding:10px 14px; gap:8px; }
+  .msg-avatar { width:26px; height:26px; font-size:10px; }
   .msg-body { max-width:100%; }
   .welcome-title { font-size:20px; }
-  #input-area { padding:10px 12px 24px; }
+  #input-area { padding:8px 10px 20px; }
   #input-wrap { padding:10px 12px; border-radius:20px; }
   #prompt { font-size:16px; }
   #chips-row { overflow-x:auto; flex-wrap:nowrap; padding-bottom:8px; -webkit-overflow-scrolling:touch; }
   #chips-row::-webkit-scrollbar { display:none; }
   .chip { flex-shrink:0; padding:8px 14px; }
   .model-dropdown-wrap { position:static; }
-  .model-dd-menu { right:12px; left:12px; width:auto; bottom:calc(100% + 12px); }
-  .action-btn, #send-btn { min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:center; }
+  .model-dd-menu { right:8px; left:8px; width:auto; bottom:calc(100% + 8px); max-height:60vh; overflow-y:auto; }
+  .action-btn, #send-btn { min-width:42px; min-height:42px; display:flex; align-items:center; justify-content:center; }
+  #settings-modal { width:95vw; max-height:90vh; }
+  .settings-body { -webkit-overflow-scrolling:touch; }
+  #profile-menu { width:calc(100vw - 24px) !important; left:12px !important; }
+  .proj-modal { width:92vw; }
+  #cropper-container { width:240px; height:240px; }
 }
 #sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:140; backdrop-filter:blur(2px); }
 @media (max-width: 768px) {
@@ -540,12 +571,6 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <div class="profile-menu-item" onclick="openSettings('general')">
       <i class="fa-solid fa-gear"></i> Configurações
     </div>
-    <div class="profile-menu-item" onclick="openSettings('api')">
-      <i class="fa-solid fa-key"></i> Configurações de API
-    </div>
-    <div class="profile-menu-item" onclick="openSettings('shortcuts')">
-      <i class="fa-solid fa-keyboard"></i> Atalhos de Teclado
-    </div>
     <div class="profile-menu-divider"></div>
     <div class="profile-menu-item" onclick="toggleDevMode()">
       <i class="fa-solid fa-terminal"></i>
@@ -555,17 +580,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <div class="profile-menu-item" onclick="openSettings('dev')" id="dev-settings-item" style="display:none;">
       <i class="fa-solid fa-sliders"></i> Config. Desenvolvedor
     </div>
-    <div class="profile-menu-divider"></div>
-    <div class="profile-menu-item danger" id="change-key-menu-item" style="display:none;" onclick="showApiModal()">
-      <i class="fa-solid fa-key"></i> Trocar chave de API
-    </div>
-    <div class="profile-menu-item danger" onclick="confirmClearAll()">
-      <i class="fa-solid fa-trash"></i> Limpar todos os dados
-    </div>
   </div>
   </div><!-- end sidebar-profile-wrap -->
 
-  <!-- Tabs -->
+  <!-- Tabs — above new chat button, separated -->
   <div class="sidebar-tabs">
     <div class="sidebar-tab active" data-tab="chats" onclick="switchTab(this)">
       <i class="fa-regular fa-message"></i>Chats
@@ -580,13 +598,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <i class="fa-regular fa-star"></i>Favoritos
     </div>
   </div>
+  <div class="sidebar-tabs-divider"></div>
 
   <!-- Chats Panel -->
   <div class="tab-panel active" id="tab-chats">
     <button class="new-chat-btn" onclick="newChat()">
       <i class="fa-solid fa-plus"></i> Nova conversa
     </button>
-    <div class="chats-label">Conversas</div>
     <div id="chat-list"></div>
   </div>
 
@@ -763,6 +781,41 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   </div>
 </div>
 
+<!-- Image Crop Modal -->
+<div id="crop-overlay" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="color:var(--amber);font-size:15px;font-weight:600;"><i class="fa-solid fa-crop"></i> Ajustar foto de perfil</div>
+  <div style="position:relative;width:260px;height:260px;border-radius:50%;overflow:hidden;border:3px solid var(--amber);background:#000;touch-action:none;" id="crop-container">
+    <img id="crop-img" style="position:absolute;cursor:grab;user-select:none;touch-action:none;" draggable="false">
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <i class="fa-solid fa-magnifying-glass-minus" style="color:var(--text3);"></i>
+    <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1" style="width:160px;accent-color:var(--amber);">
+    <i class="fa-solid fa-magnifying-glass-plus" style="color:var(--text3);"></i>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <button onclick="cancelCrop()" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:9px 22px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Cancelar</button>
+    <button onclick="applyCrop()" style="background:linear-gradient(135deg,var(--amber),var(--orange));border:none;color:#000;padding:9px 22px;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Salvar foto</button>
+  </div>
+</div>
+
+<!-- Photo Cropper Modal -->
+<div id="cropper-overlay" class="hidden">
+  <div id="cropper-title"><i class="fa-solid fa-crop-simple"></i> Ajustar foto de perfil</div>
+  <div id="cropper-container">
+    <img id="cropper-img" draggable="false">
+    <div id="cropper-circle"></div>
+  </div>
+  <div class="cropper-controls">
+    <label><i class="fa-solid fa-magnifying-glass-minus"></i></label>
+    <input type="range" id="cropper-zoom" min="0.5" max="3" step="0.01" value="1">
+    <label><i class="fa-solid fa-magnifying-glass-plus"></i></label>
+  </div>
+  <div class="cropper-btns">
+    <button class="cropper-cancel" onclick="closeCropper()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+    <button class="cropper-save" onclick="applyCrop()"><i class="fa-solid fa-check"></i> Aplicar</button>
+  </div>
+</div>
+
 <!-- Project Modal -->
 <div class="proj-modal-overlay hidden" id="proj-modal-overlay" onclick="closeProjModalIfOutside(event)">
   <div class="proj-modal">
@@ -814,11 +867,12 @@ const PROVIDER_MODELS = {
     { key:'HuggingFaceH4/zephyr-7b-beta',         label:'Zephyr 7B',           desc:'Instrução refinada' },
   ],
   google: [
-    { key:'gemini-2.0-flash',             label:'Gemini 2.0 Flash',    desc:'Rápido e moderno' },
-    { key:'gemini-2.0-flash-lite',        label:'Gemini 2.0 Flash Lite',desc:'Ultra leve' },
-    { key:'gemini-1.5-flash',             label:'Gemini 1.5 Flash',    desc:'Velocidade + qualidade' },
-    { key:'gemini-1.5-flash-8b',          label:'Gemini 1.5 Flash 8B', desc:'Compacto e rápido' },
-    { key:'gemini-1.5-pro',               label:'Gemini 1.5 Pro',      desc:'Avançado, contexto longo' },
+    { key:'gemini-2.0-flash',              label:'Gemini 2.0 Flash',      desc:'Rápido e moderno' },
+    { key:'gemini-2.0-flash-lite',         label:'Gemini 2.0 Flash Lite', desc:'Ultra leve e veloz' },
+    { key:'gemini-1.5-flash',              label:'Gemini 1.5 Flash',      desc:'Velocidade + qualidade' },
+    { key:'gemini-1.5-flash-8b',           label:'Gemini 1.5 Flash 8B',   desc:'Compacto e rápido' },
+    { key:'gemini-1.5-pro',                label:'Gemini 1.5 Pro',        desc:'Avançado, contexto longo' },
+    { key:'gemini-2.5-flash-preview-04-17',label:'Gemini 2.5 Flash',      desc:'Preview, mais inteligente' },
   ],
 };
 
@@ -829,23 +883,27 @@ const PROVIDER_TYPES = {
     { key:'Code',             label:'Código',            desc:'Foco em programação' },
     { key:'Archives_creator', label:'Criar Arquivos',    desc:'Gera arquivos baixáveis' },
     { key:'Image',            label:'Imagem',            desc:'Gera imagens com IA' },
+    { key:'WebSearch',        label:'Pesquisa Web',      desc:'Modo focado em busca atual' },
   ],
   openrouter: [
     { key:'Auto',             label:'Auto',              desc:'Balanceado' },
     { key:'Code',             label:'Código',            desc:'Foco em programação' },
     { key:'Archives_creator', label:'Criar Arquivos',    desc:'Gera arquivos baixáveis' },
     { key:'Image',            label:'Imagem',            desc:'Gera imagens com IA' },
+    { key:'WebSearch',        label:'Pesquisa Web',      desc:'Modo focado em busca atual' },
   ],
   huggingface: [
     { key:'Auto',             label:'Auto',              desc:'Balanceado' },
     { key:'Code',             label:'Código',            desc:'Foco em programação' },
     { key:'Archives_creator', label:'Criar Arquivos',    desc:'Gera arquivos baixáveis' },
+    { key:'WebSearch',        label:'Pesquisa Web',      desc:'Modo focado em busca atual' },
   ],
   google: [
     { key:'Auto',             label:'Auto',              desc:'Balanceado' },
     { key:'Code',             label:'Código',            desc:'Foco em programação' },
     { key:'Archives_creator', label:'Criar Arquivos',    desc:'Gera arquivos baixáveis' },
     { key:'Image',            label:'Imagem',            desc:'Gera imagens com IA' },
+    { key:'WebSearch',        label:'Pesquisa Web',      desc:'Modo focado em busca atual' },
   ],
 };
 
@@ -1069,44 +1127,46 @@ function openSettings(tab) {
 
   if (tab === 'general') {
     title.textContent = 'Configurações';
-    body.innerHTML = `
-      <div class="settings-section-title">Aparência</div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">Idioma da interface</div><div class="settings-row-desc">Idioma detectado automaticamente pelo navegador</div></div>
-        <select class="settings-select" disabled><option>${userLang === 'pt-BR' ? 'Português (BR)' : 'English'}</option></select>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">Histórico de conversas</div><div class="settings-row-desc">Salvo localmente no seu navegador</div></div>
-        <button class="settings-btn danger" onclick="clearAllChats()">Limpar tudo</button>
-      </div>
-      <div class="settings-section-title">Sobre</div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">Maya AI</div><div class="settings-row-desc">Open-source · Versão 1.0</div></div>
-      </div>
-    `;
-  } else if (tab === 'api') {
-    title.textContent = 'Configurações de API';
     const currentKey = getSessionKey(currentProvider);
     const maskedKey = currentKey ? currentKey.slice(0,6) + '••••••••' + currentKey.slice(-4) : 'Nenhuma';
     body.innerHTML = `
-      <div class="settings-section-title">Provedor ativo</div>
+      <div class="settings-section-title">API</div>
       <div class="settings-row">
-        <div><div class="settings-row-label">Provedor atual</div><div class="settings-row-desc">${PROVIDER_CONFIGS[currentProvider]?.name || currentProvider}</div></div>
+        <div><div class="settings-row-label">Provedor ativo</div><div class="settings-row-desc">${PROVIDER_CONFIGS[currentProvider]?.name || currentProvider}</div></div>
         <span class="key-status ${currentKey ? 'active' : 'none'}"><i class="fa-solid fa-circle"></i> ${currentKey ? 'Ativo' : 'Inativo'}</span>
       </div>
       <div class="settings-row" style="flex-direction:column;align-items:flex-start;">
         <div class="settings-row-label">Chave atual</div>
-        <div class="settings-row-desc">${maskedKey}</div>
-        ${devMode ? '<button class="settings-btn secondary" style="margin-top:10px;" onclick="closeSettings();showApiModal()">Alterar chave →</button>' : '<div class="dev-locked"><i class="fa-solid fa-lock"></i> Ative o Modo Desenvolvedor para alterar a chave</div>'}
+        <div class="settings-row-desc" style="margin-bottom:8px;">${maskedKey}</div>
+        ${devMode
+          ? '<button class="settings-btn secondary" onclick="closeSettings();showApiModal()">Trocar chave de API →</button>'
+          : '<div class="dev-locked"><i class="fa-solid fa-lock"></i> Ative o Modo Desenvolvedor para trocar a chave</div>'
+        }
       </div>
-      <div class="settings-section-title">Informações</div>
+
+      <div class="settings-section-title" style="margin-top:20px;">Atalhos de Teclado</div>
+      <div class="settings-row"><div class="settings-row-label">Enviar mensagem</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Enter</kbd></div>
+      <div class="settings-row"><div class="settings-row-label">Nova linha</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Shift + Enter</kbd></div>
+      <div class="settings-row"><div class="settings-row-label">Alternar sidebar</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Ctrl + B</kbd></div>
+      <div class="settings-row"><div class="settings-row-label">Nova conversa</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Ctrl + N</kbd></div>
+      <div class="settings-row"><div class="settings-row-label">Fechar modal</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Esc</kbd></div>
+
+      <div class="settings-section-title" style="margin-top:20px;">Dados</div>
       <div class="settings-row">
-        <div>
-          <div class="settings-row-label">Privacidade da chave</div>
-          <div class="settings-row-desc">Sua chave é salva no localStorage do seu navegador. Ela não é enviada a servidores da Maya, fica salva entre sessões e não é acessível por outros usuários ou dispositivos.</div>
-        </div>
+        <div><div class="settings-row-label">Histórico de conversas</div><div class="settings-row-desc">Apaga todas as conversas salvas</div></div>
+        <button class="settings-btn danger" onclick="clearAllChats()">Limpar</button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">Limpar todos os dados</div><div class="settings-row-desc">Apaga conversas, projetos, favoritos e configurações</div></div>
+        <button class="settings-btn danger" onclick="confirmClearAll()">Limpar tudo</button>
+      </div>
+
+      <div class="settings-section-title" style="margin-top:20px;">Sobre</div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">Maya AI</div><div class="settings-row-desc">Open-source · Versão 1.0</div></div>
       </div>
     `;
+  } else if (tab === 'api') { openSettings('general'); return;
   } else if (tab === 'profile') {
     title.textContent = 'Editar Perfil';
     const pName = localStorage.getItem('maya_profile_name') || 'Usuário Maya';
@@ -1129,19 +1189,7 @@ function openSettings(tab) {
         <button class="settings-btn" onclick="saveProfile()" style="flex:1;">Salvar perfil</button>
       </div>
     `;
-  } else if (tab === 'shortcuts') {
-    title.textContent = 'Atalhos de Teclado';
-    body.innerHTML = `
-      <div class="settings-section-title">Mensagens</div>
-      <div class="settings-row"><div class="settings-row-label">Enviar mensagem</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Enter</kbd></div>
-      <div class="settings-row"><div class="settings-row-label">Nova linha</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Shift + Enter</kbd></div>
-      <div class="settings-section-title">Navegação</div>
-      <div class="settings-row"><div class="settings-row-label">Alternar sidebar</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Ctrl + B</kbd></div>
-      <div class="settings-row"><div class="settings-row-label">Nova conversa</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Ctrl + N</kbd></div>
-      <div class="settings-row"><div class="settings-row-label">Fechar modal</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Esc</kbd></div>
-      <div class="settings-section-title">Conteúdo</div>
-      <div class="settings-row"><div class="settings-row-label">Colar imagem</div><kbd style="background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:5px;font-size:12px;color:var(--text2);">Ctrl + V</kbd></div>
-    `;
+  } else if (tab === 'shortcuts') { openSettings('general'); return;
   } else if (tab === 'dev') {
     if (!devMode) { closeSettings(); return; }
     title.textContent = '⚙ Modo Desenvolvedor';
@@ -1276,21 +1324,106 @@ function selectProfileEmoji(emoji) {
   document.getElementById('profile-avatar').style.fontSize = '18px';
 }
 
+// ── IMAGE CROP ────────────────────────────────────────────
+let cropState = { x:0, y:0, scale:1, dragging:false, startX:0, startY:0, imgW:0, imgH:0 };
+
 function handleProfilePic(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const url = e.target.result;
-    localStorage.setItem('maya_profile_pic', url);
-    const av = document.getElementById('profile-avatar');
-    av.style.backgroundImage = `url(${url})`;
-    av.style.backgroundSize = 'cover';
-    av.textContent = '';
-    const preview = document.getElementById('profile-preview-avatar');
-    if (preview) { preview.style.backgroundImage = `url(${url})`; preview.style.backgroundSize = 'cover'; preview.textContent = ''; }
-  };
+  reader.onload = e => openCropModal(e.target.result);
   reader.readAsDataURL(file);
+}
+
+function openCropModal(src) {
+  const overlay = document.getElementById('crop-overlay');
+  const img = document.getElementById('crop-img');
+  overlay.classList.remove('hidden');
+  overlay.style.display = 'flex';
+  cropState = { x:0, y:0, scale:1, dragging:false, startX:0, startY:0, imgW:0, imgH:0 };
+  document.getElementById('crop-zoom').value = 1;
+  img.onload = () => {
+    cropState.imgW = img.naturalWidth; cropState.imgH = img.naturalHeight;
+    const s = Math.max(260/img.naturalWidth, 260/img.naturalHeight);
+    img.style.width = (img.naturalWidth * s) + 'px';
+    img.style.height = (img.naturalHeight * s) + 'px';
+    cropState.scale = s; cropState.baseScale = s;
+    updateCropTransform();
+  };
+  img.src = src;
+  // Mouse drag
+  const container = document.getElementById('crop-container');
+  const onMove = ev => {
+    if (!cropState.dragging) return;
+    const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
+    cropState.x += cx - cropState.startX;
+    cropState.y += cy - cropState.startY;
+    cropState.startX = cx; cropState.startY = cy;
+    updateCropTransform();
+  };
+  const onUp = () => { cropState.dragging = false; img.style.cursor='grab'; };
+  img.onmousedown = img.ontouchstart = ev => {
+    cropState.dragging = true;
+    const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
+    cropState.startX = cx; cropState.startY = cy;
+    img.style.cursor = 'grabbing'; ev.preventDefault();
+  };
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive:false});
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+  container._cleanup = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchend', onUp);
+  };
+  // Zoom
+  document.getElementById('crop-zoom').oninput = ev => {
+    const z = parseFloat(ev.target.value);
+    cropState.scale = cropState.baseScale * z;
+    const img = document.getElementById('crop-img');
+    img.style.width = (cropState.imgW * cropState.scale) + 'px';
+    img.style.height = (cropState.imgH * cropState.scale) + 'px';
+    updateCropTransform();
+  };
+}
+
+function updateCropTransform() {
+  const img = document.getElementById('crop-img');
+  img.style.left = cropState.x + 'px';
+  img.style.top = cropState.y + 'px';
+}
+
+function cancelCrop() {
+  const overlay = document.getElementById('crop-overlay');
+  overlay.classList.add('hidden'); overlay.style.display = 'none';
+  const container = document.getElementById('crop-container');
+  if (container._cleanup) container._cleanup();
+}
+
+function applyCrop() {
+  const img = document.getElementById('crop-img');
+  const canvas = document.createElement('canvas');
+  canvas.width = 260; canvas.height = 260;
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath(); ctx.arc(130,130,130,0,Math.PI*2); ctx.clip();
+  const iW = parseFloat(img.style.width);
+  const iH = parseFloat(img.style.height);
+  ctx.drawImage(img, cropState.x, cropState.y, iW, iH);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+  localStorage.setItem('maya_profile_pic', dataUrl);
+  const av = document.getElementById('profile-avatar');
+  av.style.backgroundImage = `url(${dataUrl})`;
+  av.style.backgroundSize = 'cover';
+  av.style.backgroundPosition = 'center';
+  av.textContent = '';
+  const preview = document.getElementById('profile-preview-avatar');
+  if (preview) { preview.style.backgroundImage = `url(${dataUrl})`; preview.style.backgroundSize = 'cover'; preview.textContent = ''; }
+  cancelCrop();
+  showToast('Foto de perfil salva!');
 }
 
 function loadProfileUI() {
@@ -1727,16 +1860,58 @@ function buildImageEl(url) {
   return wrapper;
 }
 
+// Emoji → Font Awesome icon mapping
+const EMOJI_FA = {
+  '😊':'fa-face-smile','😂':'fa-face-laugh','😍':'fa-face-grin-hearts',
+  '😎':'fa-face-cool','😢':'fa-face-sad-tear','😡':'fa-face-angry',
+  '🤔':'fa-face-thinking','😴':'fa-face-sleeping','🤩':'fa-face-grin-stars',
+  '👍':'fa-thumbs-up','👎':'fa-thumbs-down','👋':'fa-hand-wave',
+  '✅':'fa-circle-check','❌':'fa-circle-xmark','⚠️':'fa-triangle-exclamation',
+  '🔥':'fa-fire','⭐':'fa-star','💡':'fa-lightbulb','🚀':'fa-rocket',
+  '🎉':'fa-party-horn','💻':'fa-laptop-code','📁':'fa-folder',
+  '📄':'fa-file-lines','🔗':'fa-link','🔍':'fa-magnifying-glass',
+  '💬':'fa-comment','📧':'fa-envelope','🔒':'fa-lock','🔑':'fa-key',
+  '⚙️':'fa-gear','🌐':'fa-globe','📊':'fa-chart-bar','🎨':'fa-palette',
+  '🎵':'fa-music','🎮':'fa-gamepad','📱':'fa-mobile','💎':'fa-gem',
+  '🧠':'fa-brain','⚡':'fa-bolt','🌟':'fa-star','❤️':'fa-heart',
+  '🏆':'fa-trophy','📌':'fa-thumbtack','🛡️':'fa-shield','🎯':'fa-bullseye',
+};
+function replaceEmojis(text) {
+  return text.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}][\uFE0F]?/gu, m => {
+    const fa = EMOJI_FA[m];
+    return fa ? `<i class="fa-solid ${fa}" style="color:var(--amber);font-size:0.9em;margin:0 1px;"></i>` : m;
+  });
+}
+
 function mdToHtml(text) {
-  let o = escHtml(text);
-  o = o.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, l, c) => `<pre><code>${c.trim()}</code></pre>`);
+  // Extract code blocks first to protect them
+  const codeBlocks = [];
+  let o = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    codeBlocks.push({ lang, code: code.trim() });
+    return `\x00CODE${codeBlocks.length - 1}\x00`;
+  });
+
+  o = escHtml(o);
+
+  // Restore code blocks safely
+  o = o.replace(/\x00CODE(\d+)\x00/g, (_, i) => {
+    const {code} = codeBlocks[i];
+    return `<pre><code>${escHtml(codeBlocks[i].code)}</code></pre>`;
+  });
+
   o = o.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  // Remove ### headings — convert to bold text instead
+  o = o.replace(/^#{1,6}\s+(.+)$/gm, '<strong>$1</strong>');
   o = o.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   o = o.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-  o = o.replace(/^\s*[\-\*]\s+(.+)$/gm, '<li>$1</li>');
-  o = o.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-  o = o.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  o = o.replace(/(?<!["\(])(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  // Compact lists — no extra spacing between items
+  o = o.replace(/^\s*[-*]\s+(.+)$/gm, '<li><i class="fa-solid fa-circle" style="font-size:5px;color:var(--amber);vertical-align:middle;margin-right:6px;"></i>$1</li>');
+  o = o.replace(/(<li>.*?<\/li>\n?)+/g, m => `<ul style="margin:6px 0 6px 0;padding:0;list-style:none;">${m}</ul>`);
+  // Numbered lists
+  o = o.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<li style="list-style:none;"><span style="color:var(--amber);font-weight:600;margin-right:6px;">$1.</span>$2</li>');
+  o = o.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  o = o.replace(/(?<!["(])(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  o = replaceEmojis(o);
   o = o.replace(/\n/g, '<br>');
   return o;
 }
@@ -1814,18 +1989,21 @@ async function sendMessage() {
 }
 
 async function callAPI(chat, userMsg, isNew, imgs = [], files = []) {
+  const isWebSearch = currentTypeKey === 'WebSearch';
   const isImageMode = currentTypeKey === 'Image';
   const isImageReq = isImageMode || (
+    !isWebSearch &&
     /\b(gera|cria|faz|desenha|imagem|foto|ilustra|picture|image|draw|generate image|painting|portrait|wallpaper|scene)\b/i.test(userMsg)
-    && !/\b(arquivo|file|código|code|script|html|css|js|python|texto|text|escreva|write|read)\b/i.test(userMsg)
+    && !/\b(arquivo|file|código|code|script|html|css|js|python|texto|text|escreva|write|read|pesquisa|busca)\b/i.test(userMsg)
     && imgs.length === 0
   );
 
   const thinkDiv = document.createElement('div');
   thinkDiv.className = 'msg assistant';
   thinkDiv.innerHTML = '<div class="msg-avatar"><svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 35C50 35 60 5 80 15C100 25 85 55 55 50C85 55 100 85 80 95C60 105 50 75 50 75C50 75 40 105 20 95C0 85 15 55 45 50C15 55 0 25 20 15C40 5 50 35 50 35Z" fill="#F5A623"/><circle cx="50" cy="50" r="9" fill="#E8600A"/></svg></div><div class="msg-body"><div class="msg-name">Maya</div><div class="thinking"><span></span><span></span><span></span></div></div>';
-  document.getElementById('messages').appendChild(thinkDiv);
-  document.getElementById('messages').scrollTop = 99999;
+  const messagesEl = document.getElementById('messages');
+  messagesEl.appendChild(thinkDiv);
+  messagesEl.scrollTop = 99999;
 
   isLoading = true;
   document.getElementById('send-btn').disabled = true;
@@ -1835,15 +2013,18 @@ async function callAPI(chat, userMsg, isNew, imgs = [], files = []) {
     if (isImageReq) {
       const seed = Math.floor(Math.random() * 99999);
       const url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(userMsg) + '?width=768&height=512&seed=' + seed + '&nologo=true&enhance=true';
-      reply = 'Aqui está!\n\n[image:' + url + ']';
+      reply = 'Aqui est\u00e1!\n\n[image:' + url + ']';
+    } else if (isWebSearch) {
+      reply = await callWithWebSearch(chat, userMsg);
     } else {
       reply = await callLLM(chat, userMsg, imgs, files);
     }
     thinkDiv.remove();
     const aiIdx = chat.messages.length;
     chat.messages.push({ role:'assistant', content:reply });
-    const div = appendMessage('assistant', reply, true, aiIdx);
-    div.dataset.idx = aiIdx;
+    // Append empty message then stream into it
+    const div = appendMessageEmpty('assistant', aiIdx);
+    await streamIntoDiv(div, reply);
     saveChats();
   } catch (err) {
     thinkDiv.remove();
@@ -1852,6 +2033,88 @@ async function callAPI(chat, userMsg, isNew, imgs = [], files = []) {
 
   isLoading = false;
   document.getElementById('send-btn').disabled = false;
+}
+
+// Append an empty assistant message div (no content yet)
+function appendMessageEmpty(role, idx) {
+  const el = document.getElementById('messages');
+  el.style.display = 'flex';
+  document.getElementById('welcome').style.display = 'none';
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.dataset.idx = idx;
+  div.innerHTML = '<div class="msg-avatar"><svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 35C50 35 60 5 80 15C100 25 85 55 55 50C85 55 100 85 80 95C60 105 50 75 50 75C50 75 40 105 20 95C0 85 15 55 45 50C15 55 0 25 20 15C40 5 50 35 50 35Z" fill="#F5A623"/><circle cx="50" cy="50" r="9" fill="#E8600A"/></svg></div><div class="msg-body"><div class="msg-name">Maya</div><div class="msg-text"></div><div class="msg-actions"></div></div>';
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+  return div;
+}
+
+// Stream text word-by-word into a message div
+async function streamIntoDiv(div, fullText) {
+  const textEl = div.querySelector('.msg-text');
+  const actEl  = div.querySelector('.msg-actions');
+  const messagesEl = document.getElementById('messages');
+
+  // Images/files render immediately
+  if (fullText.includes('[image:') || fullText.includes('[FILE:')) {
+    renderMsgContent(textEl, fullText);
+    buildActions(actEl, 'assistant', div, fullText, parseInt(div.dataset.idx));
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return;
+  }
+
+  // Word-by-word animation
+  const words = fullText.split(' ');
+  let built = '';
+  // Adaptive speed: short responses faster, long ones faster too
+  const delay = Math.max(6, Math.min(25, 1200 / words.length));
+
+  for (let i = 0; i < words.length; i++) {
+    built += (i > 0 ? ' ' : '') + words[i];
+    textEl.innerHTML = mdToHtml(built) + '<span class="streaming-cursor"></span>';
+    if (i % 4 === 0) messagesEl.scrollTop = messagesEl.scrollHeight;
+    await new Promise(r => setTimeout(r, delay));
+  }
+
+  // Final clean render
+  textEl.innerHTML = '';
+  renderMsgContent(textEl, fullText);
+  buildActions(actEl, 'assistant', div, fullText, parseInt(div.dataset.idx));
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+async function callWithWebSearch(chat, userMsg) {
+  // Use DuckDuckGo instant answer via a CORS-friendly proxy approach
+  // We'll use Pollinations text with search context injected into system prompt
+  const apiKey = getSessionKey(currentProvider);
+  const providerCfg = PROVIDER_CONFIGS[currentProvider] || PROVIDER_CONFIGS['groq'];
+  const models = PROVIDER_MODELS[currentProvider] || [];
+  const model = devMode && customModelOverride ? customModelOverride : (models[0]?.key || providerCfg.defaultModel);
+
+  // Build search-aware system prompt
+  const searchSystem = `You are Maya, an AI assistant created by Joud.
+You have access to web search. When asked about current events, news, facts, or anything requiring up-to-date information, search and answer based on your best knowledge up to your cutoff, and clearly note when information may be outdated.
+Respond in ${userLang === 'pt-BR' ? 'Portuguese (Brazil)' : 'English'}.
+Format responses clearly. Do NOT use ### headings. Use **bold** for emphasis.
+Your creator is Joud.`;
+
+  const historyMsgs = chat.messages.slice(-8).map(m => ({ role:m.role, content:m.content }));
+  const finalUrl = currentProvider === 'google' ? providerCfg.baseUrl + '?key=' + apiKey : providerCfg.baseUrl;
+  const headers = { 'Content-Type':'application/json' };
+  if (currentProvider !== 'google') headers['Authorization'] = 'Bearer ' + apiKey;
+
+  const res = await fetch(finalUrl, {
+    method:'POST', headers,
+    body: JSON.stringify({
+      model,
+      messages: [{ role:'system', content: searchSystem }, ...historyMsgs],
+      max_tokens: parseInt(localStorage.getItem('maya_max_tokens') || '2048'),
+      temperature: 0.5
+    })
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'Erro na busca'); }
+  const data = await res.json();
+  return data.choices[0].message.content;
 }
 
 async function callLLM(chat, userMsg, imgs = [], files = []) {
@@ -1878,30 +2141,35 @@ async function callLLM(chat, userMsg, imgs = [], files = []) {
   const providerCfg = PROVIDER_CONFIGS[currentProvider] || PROVIDER_CONFIGS['groq'];
 
   const modeHints = {
-    Code: 'You are in CODE mode. Prioritize generating clean, well-commented code. Always wrap code in proper markdown code blocks with the language specified.',
-    Archives_creator: 'You are in FILE CREATOR mode. When the user asks for a file, always use the [FILE:filename.ext]...[/FILE] format so they can download it.',
-    Audio: 'You are in AUDIO mode. Help the user create music, audio scripts, or MIDI-compatible notation.',
-    Video: 'You are in VIDEO mode. Help the user create video scripts, storyboards, shot lists, and descriptions.',
+    Code: 'You are in CODE mode. Prioritize generating clean, well-commented code. Always wrap code in markdown code blocks with the language specified. Never use ### headings.',
+    Archives_creator: 'You are in FILE CREATOR mode. Always generate downloadable files using [FILE:filename.ext]...content...[/FILE] format. Be thorough and complete.',
+    Audio: 'You are in AUDIO mode. Help the user create music, melodies, or MIDI notation in ABC format.',
+    Video: 'You are in VIDEO mode. Help the user with video scripts, storyboards, shot lists.',
+    WebSearch: 'You are in WEB SEARCH mode. The user wants current, up-to-date information. Provide the most accurate answer you can. Clearly mention your knowledge cutoff (early 2024) and suggest the user verify recent info. Structure answers clearly without ### headings.',
   };
   const modeHint = modeHints[currentTypeKey] ? '\n\n' + modeHints[currentTypeKey] : '';
 
-  const defaultSystem = `You are Maya, a highly intelligent and helpful AI assistant.
+  const defaultSystem = `You are Maya, a highly intelligent and helpful AI assistant created by Joud (also known as Joudacasa). If anyone asks who made you or who your creator is, always say: "I was created by Joud (Joudacasa)."
 IMPORTANT: You MUST respond in the language "${userLang}" (the user's browser language).${modeHint}
 
-Your capabilities:
-1. Formatting: Use Markdown for bold (**text**), italics (*text*), and lists (- item).
-2. Links: Always format URLs as markdown links [text](url).
-3. Emojis: Use emojis naturally to be friendly and helpful.
-4. Files: Use this format for code/text files:
+FORMATTING RULES (follow strictly):
+- NEVER use ### or any # headings. Use **bold** for emphasis instead.
+- Lists: use "- item" format. Keep list items compact, no blank lines between them.
+- Use **bold** for important terms, *italic* for subtle emphasis.
+- Use emojis sparingly and naturally.
+- Links: format as [text](url).
+
+FILES: To generate downloadable files use EXACTLY this format:
 [FILE:filename.ext]
-content
-[/FILE]
-5. Binary Files: For .midi, .mp3, .pdf, etc., encode in Base64:
-[FILE:song.midi]
-<base64>
+file content here
 [/FILE]
 
-Be concise, accurate, and empathetic. Always prioritize the user's request.`;
+IMAGES: To generate images write: [image:description of the image]
+The system will auto-generate it. Use this whenever the user asks for an image/photo/illustration.
+
+WEB SEARCH: If the user asks about current events, news, prices, weather, or anything that requires up-to-date info, say you'll search and provide the best answer you can based on your knowledge, noting the date limit.
+
+Be concise, accurate, warm and helpful. Your creator is Joud. Always prioritize the user's request.`;
 
   // Dev mode: custom system prompt
   const systemPrompt = (devMode && customSystemPrompt) ? customSystemPrompt : defaultSystem;
@@ -1928,27 +2196,40 @@ Be concise, accurate, and empathetic. Always prioritize the user's request.`;
     if (lastUser && typeof lastUser.content === 'string') lastUser.content += fileContext;
   }
 
-  // Google uses API key as query param
+  // Google uses API key as query param, others use Bearer token
   const finalUrl = currentProvider === 'google'
     ? providerCfg.baseUrl + '?key=' + apiKey
     : providerCfg.baseUrl;
   const finalKey = currentProvider === 'google' ? null : apiKey;
 
-  return await callOpenAI(model, systemPrompt, historyMsgs, finalKey, finalUrl);
+  return await callOpenAI(model, systemPrompt, historyMsgs, finalKey, finalUrl, currentProvider);
 }
 
 async function callOpenAI(model, system, messages, key, url) {
+  const isGoogle = !key; // Google passes key in URL
   const normalized = messages.map(m => ({ role:m.role, content:Array.isArray(m.content) ? m.content : m.content }));
   const headers = { 'Content-Type':'application/json' };
   if (key) headers['Authorization'] = 'Bearer ' + key;
+
+  // Google Gemini via OpenAI-compat: inject system as first user msg if needed
+  let msgList;
+  if (isGoogle) {
+    msgList = [{ role:'user', content: '[SYSTEM]: ' + system + '\n\nNow respond to: ' + (normalized[0]?.content || '') }, ...normalized.slice(1)];
+  } else {
+    msgList = [{ role:'system', content:system }, ...normalized];
+  }
+
+  const maxTok = parseInt(localStorage.getItem('maya_max_tokens')||'2048');
+  const temp = parseFloat(localStorage.getItem('maya_temperature')||'0.7');
+
   const res = await fetch(url, {
     method:'POST',
     headers,
-    body:JSON.stringify({ model, messages:[{ role:'system', content:system }, ...normalized], max_tokens:parseInt(localStorage.getItem('maya_max_tokens')||'2048'), temperature:parseFloat(localStorage.getItem('maya_temperature')||'0.7') })
+    body:JSON.stringify({ model, messages: msgList, max_tokens: maxTok, temperature: temp })
   });
   if (!res.ok) {
     const e = await res.json().catch(()=>({error:{message:'Erro de rede ou chave inválida'}}));
-    const msg = e.error?.message || JSON.stringify(e);
+    const msg = e.error?.message || e?.error?.details?.[0]?.message || JSON.stringify(e);
     throw new Error(msg);
   }
   const data = await res.json();
@@ -2194,6 +2475,7 @@ function init() {
     }
   });
 }
+
 init();
 </script>
 </body>
