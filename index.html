@@ -76,6 +76,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   width: var(--sidebar); min-width: var(--sidebar); background: var(--bg2);
   border-right: 1px solid var(--border); display: flex; flex-direction: column;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
 }
 #sidebar.closed { margin-left: calc(-1 * var(--sidebar)); transform: translateX(-10px); }
 
@@ -83,7 +84,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .sidebar-profile {
   padding: 14px 14px 10px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 10px; cursor: pointer;
-  transition: background 0.15s; border-radius: 0; position:relative;
+  transition: background 0.15s; border-radius: 0; position: relative;
+  user-select: none;
 }
 .sidebar-profile:hover { background: var(--bg3); }
 .profile-avatar {
@@ -98,12 +100,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .profile-chevron { color: var(--text3); font-size: 11px; }
 
 /* Profile dropdown */
+.sidebar-profile-wrap { position: relative; overflow: visible; }
 #profile-menu {
   position: absolute; top: calc(100% + 4px); left: 8px; right: 8px;
   background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px;
-  padding: 6px; z-index: 100; opacity: 0; pointer-events: none;
-  transform: translateY(-8px); transition: all 0.18s;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  padding: 6px; z-index: 300; opacity: 0; pointer-events: none;
+  transform: translateY(-6px); transition: all 0.18s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7);
 }
 #profile-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); }
 .profile-menu-item {
@@ -517,6 +520,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <script>if(window.innerWidth<=768){document.currentScript.parentElement.classList.add('closed');}</script>
 
   <!-- Profile -->
+  <div class="sidebar-profile-wrap">
   <div class="sidebar-profile" onclick="toggleProfileMenu(event)">
     <div class="profile-avatar" id="profile-avatar">M</div>
     <div class="profile-info">
@@ -559,6 +563,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <i class="fa-solid fa-trash"></i> Limpar todos os dados
     </div>
   </div>
+  </div><!-- end sidebar-profile-wrap -->
 
   <!-- Tabs -->
   <div class="sidebar-tabs">
@@ -646,7 +651,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 <!-- MAIN -->
 <div id="main">
-  <div id="dev-banner" style="display:none;background:linear-gradient(90deg,rgba(245,166,35,0.15),rgba(232,96,10,0.12));border-bottom:1px solid rgba(245,166,35,0.3);padding:5px 20px;font-size:11px;color:var(--amber);display:none;align-items:center;gap:8px;flex-shrink:0;">
+  <div id="dev-banner" style="display:none;background:linear-gradient(90deg,rgba(245,166,35,0.15),rgba(232,96,10,0.12));border-bottom:1px solid rgba(245,166,35,0.3);padding:5px 20px;font-size:11px;color:var(--amber);align-items:center;gap:8px;flex-shrink:0;">
     <i class="fa-solid fa-terminal"></i>
     <strong>MODO DESENVOLVEDOR ATIVO</strong>
     <span style="color:var(--text3);">— modelos, chaves e system prompt personalizados estão habilitados</span>
@@ -987,7 +992,17 @@ function toggleProfileMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('profile-menu');
   const chevron = document.getElementById('profile-chevron');
+  const profile = document.querySelector('.sidebar-profile');
   const isOpen = menu.classList.contains('open');
+
+  if (!isOpen) {
+    // Position menu dynamically below the profile header
+    const rect = profile.getBoundingClientRect();
+    menu.style.top = (rect.bottom + 4) + 'px';
+    menu.style.left = rect.left + 'px';
+    menu.style.width = rect.width + 'px';
+  }
+
   menu.classList.toggle('open', !isOpen);
   chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
@@ -1159,13 +1174,13 @@ function openSettings(tab) {
 
       <div class="settings-section-title" style="margin-top:24px;">Temperatura / Criatividade</div>
       <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
-        <input type="range" id="dev-temperature" min="0" max="1" step="0.05" value="${localStorage.getItem('maya_temperature')||0.7}" style="flex:1;accent-color:var(--amber);" oninput="document.getElementById('dev-temp-label').textContent=this.value">
-        <span id="dev-temp-label" style="font-size:13px;color:var(--amber);min-width:28px;">${localStorage.getItem('maya_temperature')||0.7}</span>
+        <input type="range" id="dev-temperature" min="0" max="1" step="0.05" value="${parseFloat(localStorage.getItem('maya_temperature')||0.7)}" style="flex:1;accent-color:var(--amber);" oninput="document.getElementById('dev-temp-label').textContent=parseFloat(this.value).toFixed(2)">
+        <span id="dev-temp-label" style="font-size:13px;color:var(--amber);min-width:32px;">${parseFloat(localStorage.getItem('maya_temperature')||0.7).toFixed(2)}</span>
       </div>
 
       <div class="settings-section-title" style="margin-top:24px;">Max Tokens de resposta</div>
       <select class="settings-select" id="dev-max-tokens" style="width:100%;">
-        ${[512,1024,2048,4096,8192].map(t=>`<option value="${t}" ${(localStorage.getItem('maya_max_tokens')||2048)==t?'selected':''}>${t} tokens</option>`).join('')}
+        ${[512,1024,2048,4096,8192].map(t=>`<option value="${t}" ${String(localStorage.getItem('maya_max_tokens')||'2048')===String(t)?'selected':''}>${t} tokens</option>`).join('')}
       </select>
 
       <div class="settings-section-title" style="margin-top:24px;">System Prompt personalizado</div>
@@ -1212,16 +1227,16 @@ function saveDevKey() {
 }
 
 function saveDevSettings() {
-  customModelOverride = document.getElementById('dev-model-override')?.value.trim() || '';
-  customSystemPrompt = document.getElementById('dev-system-prompt')?.value.trim() || '';
-  const temp = document.getElementById('dev-temperature')?.value || '0.7';
-  const maxTok = document.getElementById('dev-max-tokens')?.value || '2048';
-  localStorage.setItem('maya_custom_model', customModelOverride);
+  customModelOverride = (document.getElementById('dev-model-override')?.value || '').trim();
+  customSystemPrompt  = (document.getElementById('dev-system-prompt')?.value  || '').trim();
+  const temp   = document.getElementById('dev-temperature')?.value  || '0.7';
+  const maxTok = document.getElementById('dev-max-tokens')?.value   || '2048';
+  localStorage.setItem('maya_custom_model',  customModelOverride);
   localStorage.setItem('maya_custom_system', customSystemPrompt);
-  localStorage.setItem('maya_temperature', temp);
-  localStorage.setItem('maya_max_tokens', maxTok);
+  localStorage.setItem('maya_temperature',   temp);
+  localStorage.setItem('maya_max_tokens',    maxTok);
   saveDevKey();
-  showToast('Configurações salvas!');
+  showToast('✓ Configurações do desenvolvedor salvas!');
 }
 
 function resetDevSettings() {
@@ -1229,9 +1244,13 @@ function resetDevSettings() {
   customSystemPrompt = '';
   localStorage.removeItem('maya_custom_model');
   localStorage.removeItem('maya_custom_system');
+  localStorage.removeItem('maya_temperature');
+  localStorage.removeItem('maya_max_tokens');
   if (document.getElementById('dev-model-override')) document.getElementById('dev-model-override').value = '';
   if (document.getElementById('dev-system-prompt')) document.getElementById('dev-system-prompt').value = '';
-  showToast('Configurações resetadas!');
+  if (document.getElementById('dev-temperature')) { document.getElementById('dev-temperature').value = 0.7; document.getElementById('dev-temp-label').textContent = '0.7'; }
+  if (document.getElementById('dev-max-tokens')) document.getElementById('dev-max-tokens').value = '2048';
+  showToast('Configurações resetadas para o padrão!');
 }
 
 function confirmClearAll() {
@@ -1244,8 +1263,7 @@ function confirmClearAll() {
 function saveProfile() {
   const name = document.getElementById('profile-name-input')?.value.trim() || 'Usuário Maya';
   localStorage.setItem('maya_profile_name', name);
-  document.getElementById('profile-name').textContent = name;
-  document.getElementById('profile-avatar').textContent = localStorage.getItem('maya_profile_emoji') || name[0].toUpperCase();
+  loadProfileUI(); // reload avatar/name from localStorage (handles pic, emoji, name correctly)
   showToast('Perfil salvo!');
   closeSettings();
 }
@@ -1283,9 +1301,22 @@ function loadProfileUI() {
   const avEl = document.getElementById('profile-avatar');
   if (nameEl) nameEl.textContent = name;
   if (avEl) {
-    if (pic) { avEl.style.backgroundImage = `url(${pic})`; avEl.style.backgroundSize = 'cover'; avEl.textContent = ''; }
-    else if (emoji) { avEl.textContent = emoji; avEl.style.fontSize = '18px'; }
-    else { avEl.textContent = name[0]?.toUpperCase() || 'M'; }
+    // Reset styles first
+    avEl.style.backgroundImage = '';
+    avEl.style.backgroundSize = '';
+    avEl.style.fontSize = '';
+    if (pic) {
+      avEl.style.backgroundImage = `url(${pic})`;
+      avEl.style.backgroundSize = 'cover';
+      avEl.style.backgroundPosition = 'center';
+      avEl.textContent = '';
+    } else if (emoji) {
+      avEl.textContent = emoji;
+      avEl.style.fontSize = '18px';
+    } else {
+      avEl.textContent = name[0]?.toUpperCase() || 'M';
+      avEl.style.fontSize = '13px';
+    }
   }
 }
 
@@ -1933,14 +1964,23 @@ async function autoTitle(chat, firstMsg) {
     const key = getSessionKey(currentProvider);
     if (!key) return;
     const providerCfg = PROVIDER_CONFIGS[currentProvider] || PROVIDER_CONFIGS['groq'];
-    const res = await fetch(providerCfg.baseUrl, {
+    const models = PROVIDER_MODELS[currentProvider] || [];
+    // Use the last (lightest) model in the list for titling
+    const titleModel = models[models.length - 1]?.key || models[0]?.key || providerCfg.defaultModel;
+    const url = currentProvider === 'google'
+      ? providerCfg.baseUrl + '?key=' + key
+      : providerCfg.baseUrl;
+    const headers = { 'Content-Type':'application/json' };
+    if (currentProvider !== 'google') headers['Authorization'] = 'Bearer ' + key;
+    const res = await fetch(url, {
       method:'POST',
-      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
-      body:JSON.stringify({ model: LLM_CONFIGS['mini'].model, messages:[{ role:'system', content:`Crie um titulo curto (maximo 5 palavras) no idioma "${userLang}" para esta conversa. Responda APENAS o titulo, sem aspas.` }, { role:'user', content:firstMsg }], max_tokens:20, temperature:0.5 })
+      headers,
+      body:JSON.stringify({ model: titleModel, messages:[{ role:'system', content:`Crie um titulo curto (maximo 5 palavras) no idioma "${userLang}" para esta conversa. Responda APENAS o titulo, sem aspas, sem texto extra.` }, { role:'user', content:firstMsg.slice(0,300) }], max_tokens:20, temperature:0.5 })
     });
+    if (!res.ok) return;
     const data = await res.json();
-    const title = data.choices?.[0]?.message?.content?.trim();
-    if (title) { chat.title = title; document.getElementById('chat-title').textContent = title; renderChatList(); saveChats(); }
+    const title = data.choices?.[0]?.message?.content?.trim().replace(/['"]/g,'');
+    if (title && title.length < 60) { chat.title = title; document.getElementById('chat-title').textContent = title; renderChatList(); saveChats(); }
   } catch {}
 }
 
@@ -1961,7 +2001,7 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 2200);
 }
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); closeProfileMenu(); }
 
 // ── INIT ──────────────────────────────────────────────────
 // ── PROJECTS ─────────────────────────────────────────────
